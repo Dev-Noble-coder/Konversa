@@ -3,14 +3,44 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Shop, ArrowRight, TickCircle, Whatsapp, DirectInbox, Instagram, Facebook, ArrowLeft, Send2, VideoPlay  } from 'iconsax-react';
 import Link from 'next/link';
+import axios from 'axios';
 
 const WaitlistPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [formData, setFormData] = useState({
+    full_name: '',
+    business_name: '',
+    email: '',
+    phone_number: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const payload = {
+        ...formData,
+        platforms: selectedPlatforms // Array of strings matching Swagger schema
+      };
+
+      await axios.post('https://konversa-kpyx.onrender.com/api/auth/waitlist/', payload);
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error('Waitlist submission error:', err);
+      setError(err.response?.data?.message || err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePlatform = (id: string) => {
@@ -64,6 +94,9 @@ const socialPlatforms = [
     <input 
       required
       type="text" 
+      name="full_name"
+      value={formData.full_name}
+      onChange={handleChange}
       placeholder="Full Name" 
       className="w-full bg-[#1E293B] border border-white/5 rounded-lg py-3 pl-12 pr-4 text-[#E2E8F0] placeholder:text-[#64748B] outline-none focus:border-[#14B8A6]/50 transition-all text-sm"
     />
@@ -75,6 +108,9 @@ const socialPlatforms = [
     <input 
       required
       type="text" 
+      name="business_name"
+      value={formData.business_name}
+      onChange={handleChange}
       placeholder="Business Name" 
       className="w-full bg-[#1E293B] border border-white/5 rounded-lg py-3 pl-12 pr-4 text-[#E2E8F0] placeholder:text-[#64748B] outline-none focus:border-[#14B8A6]/50 transition-all text-sm"
     />
@@ -84,7 +120,11 @@ const socialPlatforms = [
   <div className="relative col-span-1">
     <DirectInbox className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B]" size="18" color='white' />
     <input 
+      required
       type="email" 
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
       placeholder="Email Address" 
       className="w-full bg-[#1E293B] border border-white/5 rounded-lg py-3 pl-12 pr-4 text-[#E2E8F0] placeholder:text-[#64748B] outline-none focus:border-[#14B8A6]/50 transition-all text-sm"
     />
@@ -94,7 +134,11 @@ const socialPlatforms = [
   <div className="relative col-span-1">
     <Whatsapp className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748B]" size="18" color='white' />
     <input 
+      required
       type="text" 
+      name="phone_number"
+      value={formData.phone_number}
+      onChange={handleChange}
       placeholder="WhatsApp Number" 
       className="w-full bg-[#1E293B] border border-white/5 rounded-lg py-3 pl-12 pr-4 text-[#E2E8F0] placeholder:text-[#64748B] outline-none focus:border-[#14B8A6]/50 transition-all text-sm"
     />
@@ -127,13 +171,21 @@ const socialPlatforms = [
     </div>
   </div>
 
+  {/* Error Message */}
+  {error && (
+    <div className="col-span-1 sm:col-span-2 text-red-500 text-xs font-bold mt-2">
+      {error}
+    </div>
+  )}
+
   {/* Submit Button - FIXED COL SPAN */}
   <button 
+    disabled={loading}
     type="submit"
-    className="w-full bg-[#0F766E] text-[#E2E8F0] font-black py-3 rounded-lg transition-all flex items-center justify-center gap-2 group mt-4 col-span-1 sm:col-span-2"
+    className="w-full bg-[#0F766E] hover:bg-[#14B8A6] disabled:bg-[#1E293B] disabled:cursor-not-allowed text-[#E2E8F0] font-black py-3 rounded-lg transition-all flex items-center justify-center gap-2 group mt-4 col-span-1 sm:col-span-2"
   >
-    Join the Waitlist
-    <ArrowRight size="18" color='white' className="group-hover:translate-x-1 transition-transform" />
+    {loading ? 'Joining...' : 'Join the Waitlist'}
+    {!loading && <ArrowRight size="18" color='white' className="group-hover:translate-x-1 transition-transform" />}
   </button>
 </form>
 
@@ -175,4 +227,4 @@ const socialPlatforms = [
   );
 };
 
-export default WaitlistPage;
+export default WaitlistPage;
