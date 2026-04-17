@@ -22,6 +22,7 @@ const Footer: React.FC = () => {
       links: [
         { name: "Meet the Team", href: "/team", isPage: true },
         { name: "About Us", href: "/#", isPage: false },
+        { name: "Pitch Deck", href: "/pitch", isPage: true },
         { name: "Privacy Policy", href: "/#", isPage: false },
         { name: "Terms of Service", href: "/#", isPage: false },
       ]

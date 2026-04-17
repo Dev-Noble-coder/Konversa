@@ -26,8 +26,8 @@ const team: TeamMember[] = [
   {
     name: "Covenant Joshua Adeosun",
     role: "CTO & Co-Founder",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2000&auto=format&fit=crop", // placeholder
-    bio: "1st Place Squad Hackathon Winner. Expert in type-safe Next.js architecture and high-performance state management. Engineering the robust 'Konversa' core for global scale.",
+    image: "https://res.cloudinary.com/drhfrgahv/image/upload/v1776417548/WhatsApp_Image_2026-04-17_at_06.57.05_y0qgst.jpg", // placeholder
+    bio: "1st Place Squad Hackathon Winner. Expert in architecture and high-performance software management. Engineering the robust 'Konversa' core for global scale.",
     socials: { twitter: "#", instagram: "#", email: "adeosun@konversa.co" }
   }
 ];
