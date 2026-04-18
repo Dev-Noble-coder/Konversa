@@ -53,6 +53,8 @@ export const metadata: Metadata = {
 };
 
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -63,7 +65,10 @@ export default function RootLayout({
       lang="en"
       className={`${outfit.className} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#020617]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#020617]">
+        <Toaster position="top-right" richColors theme="dark" />
+        {children}
+      </body>
     </html>
   );
 }

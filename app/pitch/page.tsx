@@ -207,30 +207,30 @@ const PitchPage = () => {
           </div>
         </section>
 
-        {/* PILOT MARKET: EKITI */}
+        {/* PILOT MARKET: NIGERIA */}
         <section className="max-w-5xl mx-auto px-6 mb-32">
           <motion.div 
             {...fadeIn}
             className="rounded-lg bg-gradient-to-br from-[#14B8A6]/10 to-transparent border border-[#14B8A6]/20 p-8 md:p-16 relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-8 opacity-10">
-              <Location size="160" variant="Bulk" className="text-[#14B8A6]" />
+              <Global size="160" variant="Bulk" className="text-[#14B8A6]" />
             </div>
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-full bg-[#14B8A6] flex items-center justify-center text-white">
                   <Location size="20" variant="Bold" />
                 </div>
-                <h4 className="text-[#14B8A6] font-bold uppercase tracking-widest text-sm">Pilot Phase: Ekiti State</h4>
+                <h4 className="text-[#14B8A6] font-bold uppercase tracking-widest text-sm">Pilot Phase: Mobile-First Nigeria</h4>
               </div>
-              <h3 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">Why Ekiti? <br/> The Perfect Testing Ground.</h3>
+              <h3 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">Why Nigeria? <br/> The Ultimate Growth Market.</h3>
               <div className="grid md:grid-cols-2 gap-12">
                 <div className="space-y-6">
                   <p className="text-[#94A3B8] leading-relaxed">
-                    Ekiti represents a high-potential, tech-savvy market with a dense population of graduate entrepreneurs. Its localized nature allows us to refine our AI's understanding of hyper-local delivery landmarks and slang.
+                    Nigeria represents a high-potential, mobile-first market with a massive population of digital entrepreneurs. Our launch strategy focuses on major commerce hubs where we refine our AI's understanding of diverse delivery landmarks and regional business slang.
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    {["Ado-Ekiti","Emure Ekit", "and more"].map(tag => (
+                    {["Lagos","Abuja", "P.H.", "and more"].map(tag => (
                       <span key={tag} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-[#E2E8F0] uppercase tracking-widest">
                         {tag}
                       </span>
@@ -241,15 +241,15 @@ const PitchPage = () => {
                   <div className="flex items-start gap-4">
                     <ShieldSearch size="24" color="#14B8A6" className="shrink-0" />
                     <div>
-                      <p className="font-bold text-white mb-1">Localized Trust</p>
-                      <p className="text-sm text-[#94A3B8]">Building trust in a community that values personal relationships.</p>
+                      <p className="font-bold text-white mb-1">National Trust Layer</p>
+                      <p className="text-sm text-[#94A3B8]">Building trust in a nationwide ecosystem that values security and personal relationships.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <StatusUp size="24" color="#14B8A6" className="shrink-0" />
                     <div>
-                      <p className="font-bold text-white mb-1">Infrastructure Refinement</p>
-                      <p className="text-sm text-[#94A3B8]">Testing our logistics bridge in a rapidly growing tech hub.</p>
+                      <p className="font-bold text-white mb-1">Infrastructure Readiness</p>
+                      <p className="text-sm text-[#94A3B8]">Testing our logistics bridge across major urban tech hubs and marketplace clusters.</p>
                     </div>
                   </div>
                 </div>

@@ -145,7 +145,7 @@ const StepItem: React.FC<StepItemProps> = ({ step }) => {
             </div>
             <div className="text-left">
               <p className="text-[9px] md:text-[10px] text-[#64748B] font-bold uppercase tracking-tighter">Status</p>
-              <p className="text-xs text-[#E2E8F0] font-medium whitespace-nowrap">Ekiti Pilot Ready</p>
+              <p className="text-xs text-[#E2E8F0] font-medium whitespace-nowrap">National Pilot Ready</p>
             </div>
           </div>
         </div>

@@ -1,0 +1,85 @@
+import axios from "axios";
+import { normalizeEmailFields } from "../utils/normalizationUtils";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://konversa-kpyx.onrender.com/";
+
+/**
+ * Retrieves the access token from session storage.
+ */
+export function getToken() {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem("token");
+}
+
+/**
+ * Sets or removes the access token and user role in session storage.
+ */
+export function setToken(token) {
+  if (typeof window === "undefined") return;
+  if (token) {
+    sessionStorage.setItem("token", token);
+  } else {
+    sessionStorage.removeItem("token");
+  }
+}
+
+/**
+ * Logs in the user with provided credentials.
+ */
+export async function login(userData) {
+  const normalizedData = normalizeEmailFields(userData);
+  const response = await axios.post(`${API_BASE_URL}api/auth/login/`, normalizedData, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * Registers a new user.
+ */
+export async function signup(userData) {
+  const normalizedData = normalizeEmailFields(userData);
+  const response = await axios.post(`${API_BASE_URL}api/auth/signup/`, normalizedData, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * Verifies OTP for email confirmation.
+ */
+export async function verifyOTP(userData) {
+  const normalizedData = normalizeEmailFields(userData);
+  const response = await axios.post(`${API_BASE_URL}api/auth/verify/`, normalizedData, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+/**
+ * Attemps to refresh the access token.
+ */
+export async function refreshToken() {
+  const savedToken = getToken();
+  try {
+    const response = await axios.post(`${API_BASE_URL}api/auth/refresh`, null, {
+      withCredentials: true,
+      headers: {
+        Authorization: savedToken ? `Bearer ${savedToken}` : undefined,
+      },
+    });
+
+    const data = response.data?.data;
+    if (data?.access_token) {
+      setToken(data.access_token, data.role);
+    }
+    return data;
+  } catch (error) {
+    console.error(
+      "Refresh token failed:",
+      error.response?.data || error.message,
+    );
+    setToken(null);
+    throw error;
+  }
+}

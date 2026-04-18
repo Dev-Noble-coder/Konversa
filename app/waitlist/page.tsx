@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Shop, ArrowRight, TickCircle, Whatsapp, DirectInbox, Instagram, Facebook, ArrowLeft, Send2, VideoPlay  } from 'iconsax-react';
 import Link from 'next/link';
-import axios from 'axios';
+import { authAPI } from '@/utils/authAPI';
+import { toast } from 'sonner';
 
 const WaitlistPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
@@ -30,14 +31,16 @@ const WaitlistPage: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        platforms: selectedPlatforms // Array of strings matching Swagger schema
+        platforms: selectedPlatforms
       };
 
-      await axios.post('https://konversa-kpyx.onrender.com/api/auth/waitlist/', payload);
+      await authAPI('post', 'api/auth/waitlist/', payload);
+      toast.success("You've been added to the waitlist!");
       setSubmitted(true);
     } catch (err: any) {
       console.error('Waitlist submission error:', err);
-      setError(err.response?.data?.message || err.message || 'Something went wrong. Please try again.');
+      // authAPI already toasts the error, but we'll set it locally for the form UI too
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -78,10 +81,10 @@ const socialPlatforms = [
                 Exclusive Pilot Access
               </div>
               <h1 className="text-3xl md:text-4xl font-bold text-[#E2E8F0] mb-4 tracking-tight">
-                Secure your spot <br /> for the <span className="italic text-white">Ekiti Pilot.</span>
+                Secure your spot <br /> for the <span className="italic text-white">Nigeria Pilot.</span>
               </h1>
               <p className="text-[#94A3B8] text-sm leading-relaxed">
-                Join vendors in Ekiti moving their sales to autopilot. We're launching in batches to ensure every vendor gets 1-on-1 setup support.
+                Join vendors across Nigeria moving their sales to autopilot. We're launching in batches to ensure every vendor gets 1-on-1 setup support.
               </p>
             </div>
 

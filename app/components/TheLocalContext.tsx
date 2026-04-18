@@ -20,10 +20,10 @@ const features: FeatureCard[] = [
     icon: <Translate size="24" color="#14B8A6" variant="Bulk" />
   },
   {
-    title: "Ekiti Logistics Map",
-    description: "Built-in intelligence for local landmarks. From Irona to Okesa, we make delivery tracking seamless for Ado-Ekiti vendors.",
-    slang: "“I dey side Fajuyi park, near the small gate.”",
-    interpretation: "Coordinate: Fajuyi Roundabout | Landmark: Side Entrance",
+    title: "National Logistics Intelligence",
+    description: "Built-in intelligence for Nigerian landmarks. From Lagos to Abuja, we make delivery tracking seamless for social vendors.",
+    slang: "“I dey side Ojuelegba, near the big bus stop.”",
+    interpretation: "Coordinate: Surulere | Landmark: Transport Hub",
     icon: <Location size="24" color="#14B8A6" variant="Bulk" />
   },
   {
@@ -57,7 +57,7 @@ const TheLocalContext: React.FC = () => {
               <span className="text-white italic underline decoration-[#0F766E] decoration-4 underline-offset-8">the street.</span>
             </h3>
             <p className="text-[#94A3B8] text-sm sm:text-lg leading-relaxed mb-8">
-              Generic AI doesn't understand the nuance of a Ekiti marketplace. Konversa knows thousands of real business conversations to identify order intent, location landmarks, and payment slang.
+              Generic AI doesn't understand the nuance of a Nigerian marketplace. Konversa knows thousands of real business conversations to identify order intent, location landmarks, and payment slang.
             </p>
             
             <div className="grid grid-cols-2 gap-6">

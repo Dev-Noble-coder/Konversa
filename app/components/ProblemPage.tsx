@@ -89,7 +89,7 @@ const ProblemPage = () => {
         >
           <div className="max-w-xl">
             <h4 className="text-2xl font-bold text-[#E2E8F0] mb-2">Ready to switch to professional selling?</h4>
-            <p className="text-[#94A3B8] text-sm">Join the pilot program in Ekiti and let Konversa handle the stress while you focus on scaling.</p>
+            <p className="text-[#94A3B8] text-sm">Join the pilot program in Nigeria and let Konversa handle the stress while you focus on scaling.</p>
           </div>
           <Link href="/waitlist">
             <button className="whitespace-nowrap px-8 py-2.5 rounded-full bg-[#14B8A6]/10 border border-[#14B8A6]/30 text-[#14B8A6] font-bold hover:bg-[#14B8A6] hover:text-[#020617] transition-all w-full sm:w-auto">

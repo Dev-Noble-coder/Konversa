@@ -14,26 +14,26 @@ interface TestimonialData {
 const testimonials: TestimonialData[] = [
   {
     name: "Afolabi Funke",
-    role: "Okesa Fashion Hub",
+    role: "Lagos Fashion Hub",
     content: "Konversa changed my business. I used to stay up until 2 AM responding to 'How much' on WhatsApp. Now, the AI handles prices while I focus on sewing. My sales doubled in the first month!",
     size: 'large',
   },
   {
     name: "Emeka Gadgets",
-    role: "Iyin Road Tech",
+    role: "Abuja Tech Mart",
     content: "The automated payment verification is a lifesaver. No more fake alerts. If Konversa doesn't confirm it, we don't ship it.",
     size: 'small',
   },
   {
     name: "Tosin Adebayo",
-    role: "Ekiti Beauty Store",
+    role: "P.H. Beauty Store",
     content: "Setting up my inventory was so easy. Now when people DM me on Instagram, they get an instant reply with a checkout link.",
     size: 'small',
   },
   {
     name: "Sola Logistics",
     role: "Delivery Partner",
-    content: "The way this platform handles landmarks in Ado is impressive. My riders find addresses faster because the AI translates 'beside the big tree' into actual useful data for us.",
+    content: "The way this platform handles landmarks in Lagos is impressive. My riders find addresses faster because the AI translates 'beside the big bus stop' into actual useful data for us.",
     size: 'large',
   }
 ];
@@ -54,7 +54,7 @@ const Testimonial: React.FC = () => {
         >
           <h2 className="text-[#14B8A6] font-mono text-xs tracking-[0.3em] uppercase mb-4">Success Stories</h2>
           <h3 className="text-3xl md:text-5xl font-bold text-[#E2E8F0]">
-            Trusted by vendors <br /> across <span className="text-white italic underline decoration-[#0F766E]">Ekiti State.</span>
+            Trusted by vendors <br /> across <span className="text-white italic underline decoration-[#0F766E]">Nigeria.</span>
           </h3>
         </motion.div>
 

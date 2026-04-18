@@ -145,7 +145,7 @@ const NavBar = () => {
                   </button>
                 </Link>
                 <p className="text-center text-[#64748B] text-xs mt-6">
-                  Ready to automate your <br/> Ekiti business?
+                  Ready to automate your <br/> Nigerian business?
                 </p>
               </div>
             </motion.div>

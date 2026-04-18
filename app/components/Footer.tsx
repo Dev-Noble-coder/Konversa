@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[#64748B] text-xs">
-            © {currentYear} Konversa AI. All rights reserved. Built for the Ekiti Pilot.
+            © {currentYear} Konversa AI. All rights reserved. Built for the Nigeria Pilot.
           </p>
           
           <div className="flex items-center gap-6">
