@@ -20,6 +20,10 @@ const partners: Partner[] = [
     name: "MISDE", 
     logoUrl: "https://res.cloudinary.com/drhfrgahv/image/upload/v1776357182/MISDE_tsekty.png"
   },
+  {
+    name: "First Bank Nigeria",
+    logoUrl: "https://www.firstbanknigeria.com/wp-content/uploads/2020/01/First-Bank.svg"
+  },
 ];
 
 const Partners: React.FC = () => {
