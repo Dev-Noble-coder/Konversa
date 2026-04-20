@@ -69,9 +69,9 @@ export async function refreshToken() {
       },
     });
 
-    const data = response.data?.data;
+    const data = response.data;
     if (data?.access_token) {
-      setToken(data.access_token, data.role);
+      setToken(data.access_token);
     }
     return data;
   } catch (error) {
@@ -83,3 +83,14 @@ export async function refreshToken() {
     throw error;
   }
 }
+
+/**
+ * Logs out the user by clearing the token.
+ */
+export function logout() {
+  setToken(null);
+  if (typeof window !== "undefined") {
+    sessionStorage.clear();
+  }
+}
+

@@ -1,238 +1,124 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Store, MessageCircle, Camera, Video, Send, ArrowRight, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { createStore, getStores } from '@/services/storeService';
+import { getStores } from '@/services/storeService';
 import { useRouter } from 'next/navigation';
+import { Loader2, LayoutDashboard, Settings, Users, MessageSquare, LogOut } from 'lucide-react';
+import { Store } from 'lucide-react';
+import { logout } from '@/services/authService';
 
-type OnboardingStep = 'CREATE_STORE' | 'SELECT_PLATFORM';
 
 export default function DashboardPage() {
-    const [step, setStep] = useState<OnboardingStep>('CREATE_STORE');
-    const [isAddingStore, setIsAddingStore] = useState(false);
-    const [storeName, setStoreName] = useState('');
-    const [loading, setLoading] = useState(false);
     const [stores, setStores] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
-    // Fetch existing stores on mount
-    // useEffect(() => {
-    //     const fetchInitialData = async () => {
-    //         try {
-    //             const data = await getStores();
-    //             setStores(data || []);
-    //         } catch (error) {
-    //             console.error('Failed to fetch stores:', error);
-    //         }
-    //     };
-    //     fetchInitialData();
-    // }, []);
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            try {
+                const data = await getStores();
+                const storesArray = Array.isArray(data) ? data
+                                  : Array.isArray(data?.results) ? data.results
+                                  : Array.isArray(data?.data) ? data.data
+                                  : Array.isArray(data?.stores) ? data.stores
+                                  : [];
+                setStores(storesArray);
+            } catch (error) {
+                console.error('Failed to fetch stores:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchInitialData();
+    }, []);
 
-    const handleAddStoreClick = () => {
-        if (stores.length > 0) {
-            toast.error('Please subscribe to create more stores!', {
-                description: 'You have reached the limit for the free tier.',
-                action: {
-                    label: 'See Plans',
-                    onClick: () => router.push('/pricing')
-                }
-            });
-            return;
-        }
-        setIsAddingStore(true);
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
     };
 
-    const handleCreateStore = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!storeName.trim()) {
-            toast.error('Please enter a store name');
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const newStore = await createStore({ name: storeName });
-            setStores([...stores, newStore]);
-            toast.success('Store created successfully!');
-            setIsAddingStore(false);
-            setStep('SELECT_PLATFORM');
-        } catch (error: any) {
-            const msg = error.response?.data?.detail || error.response?.data?.message || 'Failed to create store';
-            toast.error(msg);
-        } finally {
-            setLoading(false);
-        }
-    };
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+                <Loader2 className="animate-spin text-[#14B8A6]" size={40} />
+            </div>
+        );
+    }
 
     return (
-        <div className="bg-[#020617] min-h-screen text-[#F1F5F9] flex flex-col items-center justify-center px-6 overflow-hidden relative">
+        <div className="min-h-screen bg-[#020617] text-[#F1F5F9] flex relative overflow-hidden">
             {/* Background Glows */}
-            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#14B8A6]/5 blur-[120px] rounded-full" />
-            <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-[#1E293B]/20 blur-[100px] rounded-full" />
+            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#14B8A6]/5 blur-[120px] rounded-full pointer-events-none" />
 
-            <div className="w-full max-w-2xl z-10">
-                <AnimatePresence mode="wait">
-                    {step === 'CREATE_STORE' ? (
-                        <motion.div
-                            key="create-store"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="text-center"
-                        >
-                            <h1 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
-                                Get started with your <span className="text-[#14B8A6]">store.</span>
-                            </h1>
-                            <p className="text-[#F1F5F9]/40 mb-12 text-sm max-w-md mx-auto">
-                                Every great journey begins with a single step. Let's name your first store to begin.
-                            </p>
+            {/* Sidebar */}
+            <aside className="w-64 border-r border-[#F1F5F9]/10 p-6 flex flex-col z-10">
+                <div className="mb-12">
+                    <h1 className="text-xl font-bold tracking-widest text-[#F1F5F9]">
+                        KON<span className="text-[#14B8A6]">VERSA</span>.
+                    </h1>
+                </div>
 
-                            <div className="flex flex-wrap justify-center gap-6">
-                                {stores.map((store) => (
-                                    <div 
-                                        key={store.id} 
-                                        className="w-full md:w-64 h-48 bg-[#1E293B]/50 border-2 border-[#14B8A6]/20 rounded-3xl flex flex-col items-center justify-center gap-4 transition-all"
-                                    >
-                                        <div className="p-4 rounded-2xl bg-[#14B8A6]/10 text-[#14B8A6]">
-                                            <Store size={32} />
-                                        </div>
-                                        <p className="font-bold tracking-wide">{store.name}</p>
-                                        <button 
-                                            onClick={() => setStep('SELECT_PLATFORM')}
-                                            className="text-[10px] uppercase tracking-widest text-[#14B8A6] font-bold hover:text-[#F1F5F9] transition-colors flex items-center gap-2"
-                                        >
-                                            Continue Setup <ArrowRight size={12} />
-                                        </button>
-                                    </div>
-                                ))}
+                <nav className="flex-1 space-y-2">
+                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl bg-[#14B8A6]/10 text-[#14B8A6] font-bold text-xs uppercase tracking-widest transition-all">
+                        <LayoutDashboard size={18} /> Overview
+                    </a>
+                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
+                        <Store size={18} /> My Stores
+                    </a>
+                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
+                        <MessageSquare size={18} /> Conversations
+                    </a>
+                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
+                        <Users size={18} /> Customers
+                    </a>
+                </nav>
 
-                                {(!isAddingStore || stores.length > 0) && (
-                                    <motion.button
-                                        whileHover={{ scale: 1.02, borderColor: 'rgba(20, 184, 166, 0.4)' }}
-                                        whileTap={{ scale: 0.98 }}
-                                        onClick={handleAddStoreClick}
-                                        className="w-full md:w-64 h-48 bg-transparent border-2 border-dashed border-[#F1F5F9]/10 rounded-3xl flex flex-col items-center justify-center gap-4 group transition-all cursor-pointer"
-                                    >
-                                        <div className="p-4 rounded-full bg-[#1E293B] text-[#F1F5F9]/20 group-hover:bg-[#14B8A6]/10 group-hover:text-[#14B8A6] transition-all">
-                                            <Plus size={40} />
-                                        </div>
-                                        <span className="text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/20 group-hover:text-[#14B8A6]">Add a store</span>
-                                    </motion.button>
-                                )}
+                <div className="mt-auto pt-6 border-t border-[#F1F5F9]/10 space-y-2">
+                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
+                        <Settings size={18} /> Settings
+                    </a>
+                    <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500/60 hover:text-red-500 hover:bg-red-500/5 font-bold text-xs uppercase tracking-widest transition-all cursor-pointer"
+                    >
+                        <LogOut size={18} /> Logout
+                    </button>
+                </div>
+            </aside>
 
-                                {isAddingStore && stores.length === 0 && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="w-full max-w-md"
-                                    >
-                                        <form onSubmit={handleCreateStore} className="space-y-6">
-                                            <div className="space-y-2 text-left">
-                                                <label className="text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/40 ml-2">Store Name</label>
-                                                <input 
-                                                    autoFocus
-                                                    type="text"
-                                                    value={storeName}
-                                                    onChange={(e) => setStoreName(e.target.value)}
-                                                    placeholder="E.g. My Premium Boutique"
-                                                    className="w-full bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl px-6 py-4 focus:outline-none focus:border-[#14B8A6] transition-all text-sm"
-                                                />
-                                            </div>
-                                            <div className="flex gap-4">
-                                                <button 
-                                                    type="button"
-                                                    onClick={() => setIsAddingStore(false)}
-                                                    className="flex-1 py-4 text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/40 hover:text-[#F1F5F9] transition-colors"
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button 
-                                                    disabled={loading}
-                                                    type="submit"
-                                                    className="flex-3 bg-[#14B8A6] text-[#0B1120] py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-[#F1F5F9] transition-all shadow-lg disabled:opacity-50"
-                                                >
-                                                    {loading ? <Loader2 className="animate-spin" size={16} /> : 'Continue'}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </motion.div>
-                                )}
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="select-platform"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            className="text-center"
-                        >
-                            <h1 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
-                                Pick a <span className="text-[#14B8A6]">platform.</span>
-                            </h1>
-                            <p className="text-[#F1F5F9]/40 mb-12 text-sm max-w-md mx-auto">
-                                Select where you'd like to reach your customers. We're launching with Telegram first.
-                            </p>
+            {/* Main Content */}
+            <main className="flex-1 p-10 z-10">
+                <header className="flex items-center justify-between mb-12">
+                    <div>
+                        <h2 className="text-2xl font-extrabold tracking-tight">Overview</h2>
+                        <p className="text-xs text-[#F1F5F9]/40 tracking-widest uppercase mt-1">Here is what is happening today.</p>
+                    </div>
+                </header>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                {/* Telegram - Active */}
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => toast.info('Telegram setup coming next!')}
-                                    className="aspect-square bg-[#1E293B]/50 border-2 border-[#14B8A6]/40 rounded-3xl flex flex-col items-center justify-center gap-4 group hover:bg-[#14B8A6]/5 transition-all cursor-pointer"
-                                >
-                                    <div className="p-4 rounded-2xl bg-[#14B8A6]/10 text-[#14B8A6]">
-                                        <Send size={32} />
-                                    </div>
-                                    <span className="text-[10px] uppercase tracking-widest font-bold">Telegram</span>
-                                </motion.button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    {/* Stat Cards */}
+                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
+                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Total Revenue</h3>
+                        <p className="text-3xl font-extrabold"><span className="text-[#14B8A6]">$</span>0.00</p>
+                    </div>
+                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
+                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Active Customers</h3>
+                        <p className="text-3xl font-extrabold">0</p>
+                    </div>
+                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
+                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Active Stores</h3>
+                        <p className="text-3xl font-extrabold">{stores.length}</p>
+                    </div>
+                </div>
 
-                                {/* WhatsApp - Coming Soon */}
-                                <div className="aspect-square bg-[#1E293B]/20 border-2 border-transparent rounded-3xl flex flex-col items-center justify-center gap-4 relative overflow-hidden group grayscale opacity-50">
-                                    <div className="p-4 rounded-2xl bg-[#F1F5F9]/5 text-[#F1F5F9]/20">
-                                        <MessageCircle size={32} />
-                                    </div>
-                                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/20">WhatsApp</span>
-                                    <div className="absolute top-3 right-3 bg-[#1E293B] px-2 py-1 rounded-md">
-                                        <span className="text-[8px] uppercase tracking-tighter font-bold text-[#F1F5F9]/40">Soon</span>
-                                    </div>
-                                </div>
-
-                                {/* Instagram - Coming Soon */}
-                                <div className="aspect-square bg-[#1E293B]/20 border-2 border-transparent rounded-3xl flex flex-col items-center justify-center gap-4 relative overflow-hidden group grayscale opacity-50">
-                                    <div className="p-4 rounded-2xl bg-[#F1F5F9]/5 text-[#F1F5F9]/20">
-                                        <Camera size={32} />
-                                    </div>
-                                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/20">Instagram</span>
-                                    <div className="absolute top-3 right-3 bg-[#1E293B] px-2 py-1 rounded-md">
-                                        <span className="text-[8px] uppercase tracking-tighter font-bold text-[#F1F5F9]/40">Soon</span>
-                                    </div>
-                                </div>
-
-                                {/* TikTok - Coming Soon */}
-                                <div className="aspect-square bg-[#1E293B]/20 border-2 border-transparent rounded-3xl flex flex-col items-center justify-center gap-4 relative overflow-hidden group grayscale opacity-50">
-                                    <div className="p-4 rounded-2xl bg-[#F1F5F9]/5 text-[#F1F5F9]/20">
-                                        <Video size={32} />
-                                    </div>
-                                    <span className="text-[10px] uppercase tracking-widest font-bold text-[#F1F5F9]/20">TikTok</span>
-                                    <div className="absolute top-3 right-3 bg-[#1E293B] px-2 py-1 rounded-md">
-                                        <span className="text-[8px] uppercase tracking-tighter font-bold text-[#F1F5F9]/40">Soon</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button 
-                                onClick={() => setStep('CREATE_STORE')}
-                                className="mt-12 text-[10px] uppercase tracking-widest text-[#F1F5F9]/40 hover:text-[#14B8A6] font-bold transition-all"
-                            >
-                                Back to stores
-                            </button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                {/* Main panel area */}
+                <div className="bg-[#1E293B]/30 border border-[#F1F5F9]/10 rounded-3xl p-8 min-h-[400px] flex items-center justify-center flex-col text-center">
+                    <div className="p-4 rounded-full bg-[#14B8A6]/10 text-[#14B8A6] mb-4">
+                        <MessageSquare size={32} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">No messages yet</h3>
+                    <p className="text-sm text-[#F1F5F9]/40 max-w-md">Your bot is active. When customers contact your storefront, their messages will appear right here.</p>
+                </div>
+            </main>
         </div>
     );
 }

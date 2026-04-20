@@ -42,15 +42,18 @@ const AuthForm: React.FC<AuthFormProps> = ({ initialIsLogin = true, allowToggle 
                     password: formData.password,
                 });
                 console.log('Login Response:', data);
-                
-                // Store tokens if present in response
-                if (data.access) {
-                    setToken(data.access);
+
+                // Store access token
+                if (data?.data?.access_token) {
+                    setToken(data.data.access_token);
                 }
 
                 toast.success('Successfully logged in!');
+
+                // Use has_store boolean from login response to decide next route
+                const hasStore = data?.data?.has_store;
                 setTimeout(() => {
-                    router.push('/dashboard'); 
+                    router.push(hasStore ? '/dashboard' : '/onboard');
                 }, 1000);
             } else {
                 const data = await signup({
