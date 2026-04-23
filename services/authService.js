@@ -28,7 +28,7 @@ export function setToken(token) {
  */
 export async function login(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/login/`, normalizedData, {
+  const response = await axios.post(`${API_BASE_URL}api/auth/login`, normalizedData, {
     withCredentials: true,
   });
   return response.data;
@@ -39,7 +39,7 @@ export async function login(userData) {
  */
 export async function signup(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/signup/`, normalizedData, {
+  const response = await axios.post(`${API_BASE_URL}api/auth/signup`, normalizedData, {
     withCredentials: true,
   });
   return response.data;
@@ -50,7 +50,7 @@ export async function signup(userData) {
  */
 export async function verifyOTP(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/verify/`, normalizedData, {
+  const response = await axios.post(`${API_BASE_URL}api/auth/verify`, normalizedData, {
     withCredentials: true,
   });
   return response.data;
@@ -62,7 +62,7 @@ export async function verifyOTP(userData) {
 export async function refreshToken() {
   const savedToken = getToken();
   try {
-    const response = await axios.post(`${API_BASE_URL}api/auth/refresh`, null, {
+    const response = await axios.post(`${API_BASE_URL}api/auth/refresh`, {
       withCredentials: true,
       headers: {
         Authorization: savedToken ? `Bearer ${savedToken}` : undefined,

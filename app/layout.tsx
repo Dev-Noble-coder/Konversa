@@ -54,6 +54,7 @@ export const metadata: Metadata = {
 
 
 import { Toaster } from "sonner";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
@@ -66,8 +67,10 @@ export default function RootLayout({
       className={`${outfit.className} antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#020617]">
-        <Toaster position="top-right" richColors theme="dark" />
-        {children}
+        <Providers>
+          <Toaster position="top-right" richColors theme="dark" />
+          {children}
+        </Providers>
       </body>
     </html>
   );

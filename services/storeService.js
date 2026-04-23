@@ -26,7 +26,7 @@ export async function getStores() {
  * @param {string} channelUsername - The Telegram channel username (without @).
  */
 export async function connectTelegram(sqid, channelUsername) {
-  const response = await axios.post(`${API_BASE_URL}api/stores/connect-telegram/`, {
+  const response = await axios.post(`${API_BASE_URL}api/stores/connect-telegram`, {
     store: sqid,
     channel_username: channelUsername,
   });

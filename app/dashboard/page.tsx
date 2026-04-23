@@ -1,124 +1,140 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import {
+    Loader2,
+    Users,
+    MessageSquare,
+    Package,
+    Banknote,
+    ChevronDown,
+    ShoppingCart,
+    Map,
+} from 'lucide-react';
+import Layout from '../components/Dashboard/layout';
+import Dashboard_Header from '../components/Dashboard/Dashboard_Header';
+import { refreshToken } from '@/services/authService';
+import { useQuery } from '@tanstack/react-query';
 import { getStores } from '@/services/storeService';
-import { useRouter } from 'next/navigation';
-import { Loader2, LayoutDashboard, Settings, Users, MessageSquare, LogOut } from 'lucide-react';
-import { Store } from 'lucide-react';
-import { logout } from '@/services/authService';
+import { useMemo } from 'react';
+
 
 
 export default function DashboardPage() {
-    const [stores, setStores] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter();
+    const { data: rawStoresData, isLoading } = useQuery({
+        queryKey: ['stores'],
+        queryFn: getStores,
+    });
 
-    useEffect(() => {
-        const fetchInitialData = async () => {
-            try {
-                const data = await getStores();
-                const storesArray = Array.isArray(data) ? data
-                                  : Array.isArray(data?.results) ? data.results
-                                  : Array.isArray(data?.data) ? data.data
-                                  : Array.isArray(data?.stores) ? data.stores
-                                  : [];
-                setStores(storesArray);
-            } catch (error) {
-                console.error('Failed to fetch stores:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchInitialData();
-    }, []);
-
-    const handleLogout = () => {
-        logout();
-        router.push('/login');
-    };
+    const stores = useMemo(() => {
+        if (!rawStoresData) return [];
+        return Array.isArray(rawStoresData) ? rawStoresData
+            : Array.isArray(rawStoresData?.results) ? rawStoresData.results
+            : Array.isArray(rawStoresData?.data) ? rawStoresData.data
+            : Array.isArray(rawStoresData?.stores) ? rawStoresData.stores
+            : [];
+    }, [rawStoresData]);
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#020617] flex items-center justify-center">
+            <div className="min-h-screen bg-[#F0FAFA] flex items-center justify-center w-full">
                 <Loader2 className="animate-spin text-[#14B8A6]" size={40} />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#020617] text-[#F1F5F9] flex relative overflow-hidden">
-            {/* Background Glows */}
-            <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#14B8A6]/5 blur-[120px] rounded-full pointer-events-none" />
+        < >
 
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-[#F1F5F9]/10 p-6 flex flex-col z-10">
-                <div className="mb-12">
-                    <h1 className="text-xl font-bold tracking-widest text-[#F1F5F9]">
-                        KON<span className="text-[#14B8A6]">VERSA</span>.
-                    </h1>
-                </div>
+            <Layout>
+                <main className="flex-1 p-5 lg:p-10 z-10 overflow-y-scroll">
+                    <Dashboard_Header />
 
-                <nav className="flex-1 space-y-2">
-                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl bg-[#14B8A6]/10 text-[#14B8A6] font-bold text-xs uppercase tracking-widest transition-all">
-                        <LayoutDashboard size={18} /> Overview
-                    </a>
-                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
-                        <Store size={18} /> My Stores
-                    </a>
-                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
-                        <MessageSquare size={18} /> Conversations
-                    </a>
-                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
-                        <Users size={18} /> Customers
-                    </a>
-                </nav>
-
-                <div className="mt-auto pt-6 border-t border-[#F1F5F9]/10 space-y-2">
-                    <a href="#" className="flex items-center gap-4 px-4 py-3 rounded-xl text-[#F1F5F9]/40 hover:text-[#F1F5F9] hover:bg-[#F1F5F9]/5 font-bold text-xs uppercase tracking-widest transition-all">
-                        <Settings size={18} /> Settings
-                    </a>
-                    <button 
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-red-500/60 hover:text-red-500 hover:bg-red-500/5 font-bold text-xs uppercase tracking-widest transition-all cursor-pointer"
-                    >
-                        <LogOut size={18} /> Logout
-                    </button>
-                </div>
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 p-10 z-10">
-                <header className="flex items-center justify-between mb-12">
-                    <div>
-                        <h2 className="text-2xl font-extrabold tracking-tight">Overview</h2>
-                        <p className="text-xs text-[#F1F5F9]/40 tracking-widest uppercase mt-1">Here is what is happening today.</p>
+                    {/* Analytic Overview Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-[#1E293B] flex items-center gap-2">
+                            Analytic Overview
+                           
+                        </h2>
+                        {/* <div className="flex items-center gap-2 px-3 py-1 bg-white border border-[#E2E8F0] rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                            <span className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-widest">This Year</span>
+                            <ChevronDown size={12} className="text-[#94A3B8]" />
+                        </div> */}
                     </div>
-                </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                     {/* Stat Cards */}
-                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
-                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Total Revenue</h3>
-                        <p className="text-3xl font-extrabold"><span className="text-[#14B8A6]">$</span>0.00</p>
-                    </div>
-                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
-                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Active Customers</h3>
-                        <p className="text-3xl font-extrabold">0</p>
-                    </div>
-                    <div className="bg-[#1E293B]/50 border border-[#F1F5F9]/10 rounded-2xl p-6">
-                        <h3 className="text-[10px] text-[#F1F5F9]/40 font-bold uppercase tracking-widest mb-4">Active Stores</h3>
-                        <p className="text-3xl font-extrabold">{stores.length}</p>
-                    </div>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                        {/* Total Revenue */}
+                        <div className="bg-[#FF6B93] border border-[#FF4D7E] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Revenue</h3>
+                                <p className="text-3xl font-bold tracking-tight">₦ 0.00</p>
+                            </div>
+                            <div className="relative z-10 flex items-center justify-between mt-4">
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">All time total</p>
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                                <span className="text-5xl font-bold opacity-80 group-hover:opacity-40 transition-opacity select-none">₦</span>
+                            </div>
+                        </div>
 
-                {/* Main panel area */}
-                <div className="bg-[#1E293B]/30 border border-[#F1F5F9]/10 rounded-3xl p-8 min-h-[400px] flex items-center justify-center flex-col text-center">
-                    <div className="p-4 rounded-full bg-[#14B8A6]/10 text-[#14B8A6] mb-4">
-                        <MessageSquare size={32} />
+                        {/* Total Stores */}
+                        <div className="bg-[#B186FF] border border-[#9457FF] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Stores</h3>
+                                <p className="text-3xl font-bold tracking-tight">{stores.length}</p>
+                            </div>
+                            <div className="relative z-10 flex items-center justify-between mt-4">
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Connected channels</p>
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                                <Users size={48} />
+                            </div>
+                        </div>
+
+                        {/* Total Orders */}
+                        <div className="bg-[#65D4B0] border border-[#4ABFA0] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Orders</h3>
+                                <p className="text-3xl font-bold tracking-tight">0</p>
+                            </div>
+                            <div className="relative z-10 flex items-center justify-between mt-4">
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Last 30 days</p>
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                                <ShoppingCart size={48} />
+                            </div>
+                        </div>
+
+                        {/* Total Products */}
+                        <div className="bg-[#FFD460] border border-[#F2C446] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Products</h3>
+                                <p className="text-3xl font-bold tracking-tight">0</p>
+                            </div>
+                            <div className="relative z-10 flex items-center justify-between mt-4">
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Active listings</p>
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                                <Package size={48} />
+                            </div>
+                        </div>
                     </div>
-                    <h3 className="text-xl font-bold mb-2">No messages yet</h3>
-                    <p className="text-sm text-[#F1F5F9]/40 max-w-md">Your bot is active. When customers contact your storefront, their messages will appear right here.</p>
-                </div>
-            </main>
-        </div>
+
+                    {/* Messages Panel */}
+                    <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 min-h-[380px] flex items-center justify-center flex-col text-center shadow-sm">
+                        <div
+                            className="p-4 rounded-full mb-4"
+                            style={{ background: '#F0FAFA' }}
+                        >
+                            <MessageSquare size={32} color="#14B8A6" />
+                        </div>
+                        <h3 className="text-xl font-bold mb-2 text-[#1E293B]">No messages yet</h3>
+                        <p className="text-sm text-[#94A3B8] max-w-md">
+                            Your bot is active. When customers contact your storefront, their messages will appear right here.
+                        </p>
+                    </div>
+                </main>
+            </Layout>
+        </>
     );
 }

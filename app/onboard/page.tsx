@@ -268,12 +268,12 @@ export default function OnboardPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="w-full max-w-lg mx-auto"
+                            className="w-full max-w-lg mx-auto py-10"
                         >
                             {/* Icon */}
                             <div className="mb-8 flex justify-center">
-                                <div className="p-5 rounded-lg bg-[#14B8A6]/10 text-[#14B8A6] border-2 border-[#14B8A6]/20 shadow-[0_0_30px_rgba(20,184,166,0.15)]">
-                                    <SiTelegram size={48} />
+                                <div className="p-3 rounded-lg bg-[#14B8A6]/10 text-[#14B8A6] border-2 border-[#14B8A6]/20 shadow-[0_0_30px_rgba(20,184,166,0.15)]">
+                                    <SiTelegram size={32} />
                                 </div>
                             </div>
 

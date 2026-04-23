@@ -62,7 +62,7 @@ const HowItWorks: React.FC = () => {
   });
 
   return (
-    <section ref={containerRef} className="relative py-16 md:py-20 bg-[#020617] overflow-hidden" id='howitworks'>
+    <section ref={containerRef} className="relative py-16 md:py-20 bg-[#020617] overflow-hidden" id='howitworks' style={{ position: 'relative' }}>
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         
         {/* Section Header */}
