@@ -55,7 +55,7 @@ const HeroPage = () => {
                     transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
                     className="text-[#94A3B8] text-lg  max-w-2xl mx-auto mb-10 leading-relaxed"
                 >
-                    Konversa centralizes your WhatsApp, IG, and TikTok sales into one dashboard.
+                    Konversa centralizes your WhatsApp, Telegram, Instagram, and TikTok sales into one dashboard.
                     Respond faster, track orders, and build trust, <span className="text-[#E2E8F0] font-semibold">all in one place.</span>
                 </motion.p>
 
