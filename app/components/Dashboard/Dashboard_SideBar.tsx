@@ -54,7 +54,7 @@ const Dashboard_SideBar = () => {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isAddStoreOpen, setIsAddStoreOpen] = useState(false);
 
-    // 1. Fetch Stores (Cached by TanStack Query)
+
     const { data: rawStoresData } = useQuery<any>({
         queryKey: ['stores'],
         queryFn: getStores,
