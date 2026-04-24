@@ -1,7 +1,8 @@
-import axios from "axios";
 import { normalizeEmailFields } from "../utils/normalizationUtils";
+import axiosInstance from "../utils/axiosInstance";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
 /**
  * Retrieves the access token from session storage.
@@ -28,9 +29,7 @@ export function setToken(token) {
  */
 export async function login(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/login`, normalizedData, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.post(`api/auth/login`, normalizedData);
   return response.data;
 }
 
@@ -39,9 +38,7 @@ export async function login(userData) {
  */
 export async function signup(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/signup`, normalizedData, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.post(`api/auth/signup`, normalizedData);
   return response.data;
 }
 
@@ -50,9 +47,7 @@ export async function signup(userData) {
  */
 export async function verifyOTP(userData) {
   const normalizedData = normalizeEmailFields(userData);
-  const response = await axios.post(`${API_BASE_URL}api/auth/verify`, normalizedData, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.post(`api/auth/verify`, normalizedData);
   return response.data;
 }
 
@@ -62,8 +57,7 @@ export async function verifyOTP(userData) {
 export async function refreshToken() {
   const savedToken = getToken();
   try {
-    const response = await axios.post(`${API_BASE_URL}api/auth/refresh`, {
-      withCredentials: true,
+    const response = await axiosInstance.post(`api/auth/refresh`, {}, {
       headers: {
         Authorization: savedToken ? `Bearer ${savedToken}` : undefined,
       },
