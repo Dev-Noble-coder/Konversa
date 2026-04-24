@@ -14,7 +14,7 @@ const OrdersPage = () => {
                     <p className="text-xs text-[#94A3B8] tracking-widest uppercase mt-1">Manage all customer orders across platforms.</p>
                 </div>
                 
-                <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 min-h-[380px] flex items-center justify-center flex-col text-center shadow-sm">
+                <div className="bg-white border border-[#E2E8F0] rounded-lg p-8 min-h-[380px] flex items-center justify-center flex-col text-center ">
                     <h3 className="text-xl font-bold mb-2 text-[#1E293B]">No orders yet</h3>
                     <p className="text-sm text-[#94A3B8] max-w-md">
                         When a customer makes a purchase, their order details will appear here.

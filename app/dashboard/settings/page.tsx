@@ -99,7 +99,7 @@ export default function SettingsPage() {
                     </div>
 
                     {/* Tabs Navigation */}
-                    <div className="flex gap-2 p-1 bg-slate-100/50 rounded-full w-fit">
+                    <div className="flex gap-2 p-1 bg-slate-200/50 rounded-full w-fit">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
                             const isActive = activeTab === tab.id;
@@ -107,9 +107,9 @@ export default function SettingsPage() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id as SettingsTab)}
-                                    className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-200 cursor-pointer ${
+                                    className={`flex items-center gap-2 px-6 py-2.5 rounded-full  text-xs lg:text-sm font-bold transition-all duration-200 cursor-pointer ${
                                         isActive 
-                                        ? 'bg-white text-[#14B8A6] shadow-sm' 
+                                        ? 'bg-white text-[#14B8A6] border' 
                                         : 'text-slate-500 hover:text-slate-700'
                                     }`}
                                 >
@@ -132,7 +132,7 @@ export default function SettingsPage() {
                                 {/* Left Column: Store Details & Socials */}
                                 <div className="lg:col-span-2 space-y-6">
                                     {/* General Section */}
-                                    <section className="bg-white rounded-lg border border-slate-100 p-6 shadow-sm space-y-6">
+                                    <section className="bg-white rounded-lg border border-slate-200 p-6 space-y-6">
                                         <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
                                             <div className="p-2 bg-slate-50 rounded-lg text-slate-400">
                                                 <Settings size={20} />
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                                     </section>
 
                                     {/* Socials Section */}
-                                    <section className="bg-white rounded-lg border border-slate-100 p-6 shadow-sm space-y-6">
+                                    <section className="bg-white rounded-lg border border-slate-200 p-6  space-y-6">
                                         <div className="flex items-center gap-3 pb-4 border-b border-slate-50">
                                             <div className="p-2 bg-[#14B8A6]/10 rounded-lg text-[#14B8A6]">
                                                 <Globe size={20} />
@@ -165,9 +165,9 @@ export default function SettingsPage() {
 
                                         <div className="space-y-6">
                                             {/* Telegram (Active) */}
-                                            <div className="flex items-center justify-between p-4 bg-slate-50/50 rounded-lg border border-slate-100">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50/50 rounded-lg border border-slate-100 gap-5 sm:gap-0">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="p-3 bg-white rounded-xl shadow-sm text-[#14B8A6] border border-slate-100">
+                                                    <div className="p-3 bg-white rounded-lg text-[#14B8A6] border border-slate-200">
                                                         <SiTelegram size={24} />
                                                     </div>
                                                     <div>
@@ -202,7 +202,7 @@ export default function SettingsPage() {
                                                         { name: 'TikTok', icon: SiTiktok, color: 'text-slate-900' },
                                                     ].map((social) => (
                                                         <div key={social.name} className="flex items-center gap-3 p-3 bg-slate-50/30 border border-slate-100 rounded-lg grayscale opacity-60">
-                                                            <div className={`p-2 bg-white rounded-lg shadow-sm border border-slate-100 ${social.color}`}>
+                                                            <div className={`p-2 bg-white rounded-lg  border shadow border-slate-200 ${social.color}`}>
                                                                 <social.icon size={18} />
                                                             </div>
                                                             <span className="text-sm font-bold text-slate-400">{social.name}</span>
@@ -217,7 +217,7 @@ export default function SettingsPage() {
                                 {/* Right Column: Danger Zone & Info */}
                                 <div className="space-y-6">
                                     {/* Danger Zone */}
-                                    <section className="bg-white rounded-lg border border-red-100 p-6 shadow-sm space-y-6">
+                                    <section className="bg-white rounded-lg border border-red-200 p-4 sm:p-6 space-y-6">
                                         <div className="flex items-center gap-3 text-red-500">
                                             <AlertTriangle size={20} />
                                             <h2 className="font-bold">Danger Zone</h2>
@@ -259,7 +259,7 @@ export default function SettingsPage() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                className="bg-white rounded-lg border border-slate-100 p-12 text-center shadow-sm"
+                                className="bg-white rounded-lg border border-slate-200 p-12 text-center "
                             >
                                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mx-auto mb-6">
                                     <User size={40} />

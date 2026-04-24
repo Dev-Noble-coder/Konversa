@@ -95,11 +95,20 @@ const Dashboard_SideBar = () => {
         setIsMobileOpen(false);
     }, [pathname]);
 
+    const NairaIcon = ({ size = 18, strokeWidth = 2, className = "" }: { size?: number; strokeWidth?: number; className?: string }) => (
+        <div 
+            style={{ width: size, height: size }} 
+            className={`flex items-center justify-center font-bold leading-none ${className}`}
+        >
+            <span style={{ fontSize: size }}>₦</span>
+        </div>
+    );
+
     const navItems = [
         { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
         { label: 'Products', icon: Package, path: '/dashboard/products' },
         { label: 'Orders', icon: ShoppingCart, badge: 12, path: '/dashboard/orders' },
-        { label: 'Revenue', icon: DollarSign, path: '/dashboard/revenue' },
+        { label: 'Revenue', icon: NairaIcon, path: '/dashboard/revenue' },
         { label: 'Customers', icon: Users, path: '/dashboard/customers' },
         { label: 'Subscriptions', icon: CreditCard, path: '/dashboard/subscriptions' },
     ];
@@ -461,7 +470,7 @@ const Dashboard_SideBar = () => {
                     </nav>
 
                     {/* Footer / Logout */}
-                    <div className={`w-full flex flex-col ${isMobileOpen ? 'px-4 gap-1' : 'items-center gap-6'} mt-auto`}>
+                    <div className={`w-full flex flex-col ${isMobileOpen ? 'px-4 gap-1' : 'items-center gap-3'} mt-auto`}>
                         {bottomNav.map(({ label, icon: Icon, path }) => {
                             const isActive = path ? pathname?.startsWith(path) : false;
                             return isMobileOpen ? (
