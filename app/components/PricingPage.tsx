@@ -137,7 +137,7 @@ const PricingPage: React.FC<PricingPageProps> = ({ isDark = false }) => {
                 tier.isPopular 
                 ? 'bg-[#14B8A6] text-white hover:bg-[#0F766E]' 
                 : (isDark 
-                    ? 'bg-white text-slate-950 hover:bg-slate-100' 
+                    ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10 backdrop-blur-md' 
                     : 'bg-slate-900 text-white hover:bg-slate-800')
               }`}>
                 {tier.cta}
