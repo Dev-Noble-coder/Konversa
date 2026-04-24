@@ -18,7 +18,7 @@ export default function Home() {
       <ProblemPage />
       <HowItWorks />
       <TheLocalContext />
-      <PricingPage />
+      <PricingPage isDark={true} />
       <TheComparisonTable />
       <Testimonial />
       <Partners />

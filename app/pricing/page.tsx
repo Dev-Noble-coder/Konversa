@@ -7,7 +7,7 @@ const page = () => {
   return (
     <>
     <NavBar />
-    <PricingPage />
+    <PricingPage isDark={true} />
     <Footer />
     
     </>
