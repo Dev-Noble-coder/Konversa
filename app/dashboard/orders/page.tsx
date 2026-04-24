@@ -7,7 +7,7 @@ import Dashboard_Header from '@/app/components/Dashboard/Dashboard_Header';
 const OrdersPage = () => {
     return (
         <Layout>
-            <main className="flex-1 p-5 lg:p-10 z-10">
+            <main className="flex-1 p-3 md:p-5 lg:p-10  z-10">
                 <Dashboard_Header />
                 <div className="mb-8">
                     <h2 className="text-2xl font-extrabold tracking-tight text-[#1E293B]">Orders</h2>

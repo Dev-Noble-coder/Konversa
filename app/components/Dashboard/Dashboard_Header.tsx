@@ -36,7 +36,7 @@ const Dashboard_Header = () => {
                     
                     {/* User Profile */}
                     <div className="flex items-center gap-3 cursor-pointer group">
-                        <div className="w-8 h-8 md:w-9 md:h-9 rounded-sm overflow-hidden bg-[#8B5CF6] flex items-center justify-center shadow-sm shrink-0">
+                        <div className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden bg-[#8B5CF6] flex items-center justify-center shadow-sm shrink-0">
                             <img 
                                 src="https://i.pravatar.cc/150?img=11" 
                                 alt="User avatar" 

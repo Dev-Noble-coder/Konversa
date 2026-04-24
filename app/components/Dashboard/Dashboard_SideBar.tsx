@@ -24,9 +24,13 @@ import {
     Menu,
     X,
     ChevronRight,
+    CreditCard,
+    Plus,
 } from 'lucide-react';
 
 
+
+import AddStoreOverlay from './AddStoreOverlay';
 
 interface TelegramChannel {
     sqid: string;
@@ -48,6 +52,7 @@ const Dashboard_SideBar = () => {
     const queryClient = useQueryClient();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isAddStoreOpen, setIsAddStoreOpen] = useState(false);
 
     // 1. Fetch Stores (Cached by TanStack Query)
     const { data: rawStoresData } = useQuery<any>({
@@ -96,10 +101,11 @@ const Dashboard_SideBar = () => {
         { label: 'Orders', icon: ShoppingCart, badge: 12, path: '/dashboard/orders' },
         { label: 'Revenue', icon: DollarSign, path: '/dashboard/revenue' },
         { label: 'Customers', icon: Users, path: '/dashboard/customers' },
+        { label: 'Subscriptions', icon: CreditCard, path: '/dashboard/subscriptions' },
     ];
 
     const bottomNav = [
-        { label: 'Settings', icon: Settings },
+        { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
     ];
 
 
@@ -156,9 +162,22 @@ const Dashboard_SideBar = () => {
 
                 {isDropdownOpen && (
                     <div className="absolute left-4 right-4 mt-2 py-2 bg-white rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-50 border border-[#E2E8F0] overflow-hidden">
-                        <p className="px-4 py-2 text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest border-b border-[#F1F5F9]">
-                            Switch Store
-                        </p>
+                        <div className="flex items-center justify-between px-4 py-2 border-b border-[#F1F5F9]">
+                            <p className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
+                                Switch Store
+                            </p>
+                            <button 
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsAddStoreOpen(true);
+                                    setIsDropdownOpen(false);
+                                }}
+                                className="p-1 rounded-md hover:bg-[#F0FAFA] text-[#14B8A6] transition-colors"
+                                title="Add Store"
+                            >
+                                <Plus size={14} />
+                            </button>
+                        </div>
                         <div className="max-h-60 overflow-y-auto">
                             {stores.length > 0 ? (
                                 stores.map((store: Store) => (
@@ -239,15 +258,23 @@ const Dashboard_SideBar = () => {
 
             {/* Bottom Nav */}
             <div className="px-4 pb-8 pt-6 space-y-1" style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}>
-                {bottomNav.map(({ label, icon: Icon }) => (
-                    <button
-                        key={label}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 cursor-pointer text-white/75 hover:bg-white/10 hover:text-white"
-                    >
-                        <Icon size={17} strokeWidth={1.8} />
-                        <span className="text-xs uppercase tracking-widest font-medium">{label}</span>
-                    </button>
-                ))}
+                {bottomNav.map(({ label, icon: Icon, path }) => {
+                    const isActive = path ? pathname?.startsWith(path) : false;
+                    return (
+                        <button
+                            key={label}
+                            onClick={() => path && router.push(path)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 cursor-pointer ${
+                                isActive 
+                                ? 'bg-white/20 text-white' 
+                                : 'text-white/75 hover:bg-white/10 hover:text-white'
+                            }`}
+                        >
+                            <Icon size={17} strokeWidth={1.8} />
+                            <span className="text-xs uppercase tracking-widest font-medium">{label}</span>
+                        </button>
+                    );
+                })}
 
                 <button
                     onClick={handleLogout}
@@ -273,7 +300,7 @@ const Dashboard_SideBar = () => {
                     key="mobile-sidebar"
                     initial={false}
                     animate={{ 
-                        width: isMobileOpen ? 256 : 80,
+                        width: isMobileOpen ? 256 : 60,
                     }}
                     transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                     className="lg:hidden fixed left-0 top-0 bottom-0 z-[70] bg-[#14B8A6] flex flex-col items-center py-8 border-r border-white/10 shadow-2xl overflow-hidden rounded-r-4xl"
@@ -328,9 +355,22 @@ const Dashboard_SideBar = () => {
 
                             {isDropdownOpen && (
                                 <div className="absolute left-4 right-4 mt-2 py-2 bg-white rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.2)] z-50 border border-[#E2E8F0] overflow-hidden">
-                                    <p className="px-4 py-2 text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest border-b border-[#F1F5F9]">
-                                        Switch Store
-                                    </p>
+                                    <div className="flex items-center justify-between px-4 py-2 border-b border-[#F1F5F9]">
+                                        <p className="text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
+                                            Switch Store
+                                        </p>
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsAddStoreOpen(true);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className="p-1 rounded-md hover:bg-[#F0FAFA] text-[#14B8A6] transition-colors"
+                                            title="Add Store"
+                                        >
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
                                     <div className="max-h-60 overflow-y-auto">
                                         {stores.length > 0 ? (
                                             stores.map((store: Store) => (
@@ -422,6 +462,34 @@ const Dashboard_SideBar = () => {
 
                     {/* Footer / Logout */}
                     <div className={`w-full flex flex-col ${isMobileOpen ? 'px-4 gap-1' : 'items-center gap-6'} mt-auto`}>
+                        {bottomNav.map(({ label, icon: Icon, path }) => {
+                            const isActive = path ? pathname?.startsWith(path) : false;
+                            return isMobileOpen ? (
+                                <button
+                                    key={label}
+                                    onClick={() => path && router.push(path)}
+                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-200 cursor-pointer ${
+                                        isActive 
+                                        ? 'bg-white/20 text-white' 
+                                        : 'text-white/75 hover:bg-white/10 hover:text-white'
+                                    }`}
+                                >
+                                    <Icon size={17} strokeWidth={1.8} />
+                                    <span className="text-xs uppercase tracking-widest font-medium">{label}</span>
+                                </button>
+                            ) : (
+                                <button
+                                    key={label}
+                                    onClick={() => path && router.push(path)}
+                                    className={`w-10 h-10 rounded-sm flex items-center justify-center transition-all cursor-pointer ${
+                                        isActive ? 'bg-white text-[#14B8A6] shadow-lg' : 'text-white/70 hover:bg-white/10'
+                                    }`}
+                                >
+                                    <Icon size={20} />
+                                </button>
+                            );
+                        })}
+
                         {isMobileOpen ? (
                             <button
                                 onClick={handleLogout}
@@ -455,7 +523,13 @@ const Dashboard_SideBar = () => {
             </AnimatePresence>
             
             {/* Spacer for mobile to prevent content from going under the fixed mini-sidebar */}
-            <div className="lg:hidden w-20 flex-shrink-0" />
+            <div className="lg:hidden w-[60px] flex-shrink-0" />
+            
+            {/* Add Store Overlay */}
+            <AddStoreOverlay 
+                isOpen={isAddStoreOpen} 
+                onClose={() => setIsAddStoreOpen(false)} 
+            />
         </>
     );
 }

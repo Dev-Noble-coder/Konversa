@@ -1,7 +1,7 @@
 import axios from "axios";
 import { normalizeEmailFields } from "../utils/normalizationUtils";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://konversa-kpyx.onrender.com/";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
  * Retrieves the access token from session storage.

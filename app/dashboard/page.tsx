@@ -46,7 +46,7 @@ export default function DashboardPage() {
         < >
 
             <Layout>
-                <main className="flex-1 p-5 lg:p-10 z-10 overflow-y-scroll">
+                <main className="flex-1 p-3 md:p-5 lg:p-10  z-10 overflow-y-scroll">
                     <Dashboard_Header />
 
                     {/* Analytic Overview Header */}
@@ -62,66 +62,78 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Stat Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div className="grid grid-cols-2  lg:grid-cols-4 gap-3 lg:gap-6 mb-10">
                         {/* Total Revenue */}
-                        <div className="bg-[#FF6B93] border border-[#FF4D7E] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                        <div className="bg-[#FF6B93] border border-[#FF4D7E] rounded-lg p-3 md:p-4 lg:p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Revenue</h3>
                                 <p className="text-3xl font-bold tracking-tight">₦ 0.00</p>
                             </div>
                             <div className="relative z-10 flex items-center justify-between mt-4">
-                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">All time total</p>
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">All time <br /> total</p>
                             </div>
-                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity hidden lg:block">
                                 <span className="text-5xl font-bold opacity-80 group-hover:opacity-40 transition-opacity select-none">₦</span>
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity lg:hidden">
+                                <span className="text-3xl font-bold opacity-80 group-hover:opacity-40 transition-opacity select-none">₦</span>
                             </div>
                         </div>
 
                         {/* Total Stores */}
-                        <div className="bg-[#B186FF] border border-[#9457FF] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                        <div className="bg-[#B186FF] border border-[#9457FF] rounded-lg p-3 md:p-4 lg:p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Stores</h3>
                                 <p className="text-3xl font-bold tracking-tight">{stores.length}</p>
                             </div>
                             <div className="relative z-10 flex items-center justify-between mt-4">
-                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Connected channels</p>
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide ">Connected <br /> channels</p>
                             </div>
-                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity hidden lg:block">
                                 <Users size={48} />
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity lg:hidden">
+                                <Users size={30} />
                             </div>
                         </div>
 
                         {/* Total Orders */}
-                        <div className="bg-[#65D4B0] border border-[#4ABFA0] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                        <div className="bg-[#65D4B0] border border-[#4ABFA0] rounded-lg p-3 md:p-4 lg:p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Orders</h3>
                                 <p className="text-3xl font-bold tracking-tight">0</p>
                             </div>
                             <div className="relative z-10 flex items-center justify-between mt-4">
-                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Last 30 days</p>
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Last 30 <br /> days</p>
                             </div>
-                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity hidden lg:block ">
                                 <ShoppingCart size={48} />
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity lg:hidden">
+                                <ShoppingCart size={30} />
                             </div>
                         </div>
 
                         {/* Total Products */}
-                        <div className="bg-[#FFD460] border border-[#F2C446] rounded-lg p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
+                        <div className="bg-[#FFD460] border border-[#F2C446] rounded-lg p-3 md:p-4 lg:p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Products</h3>
                                 <p className="text-3xl font-bold tracking-tight">0</p>
                             </div>
                             <div className="relative z-10 flex items-center justify-between mt-4">
-                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Active listings</p>
+                                <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Active <br /> listings</p>
                             </div>
-                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity hidden lg:block">
                                 <Package size={48} />
+                            </div>
+                            <div className="absolute bottom-2 right-4 opacity-20 group-hover:opacity-40 transition-opacity lg:hidden">
+                                <Package size={30} />
                             </div>
                         </div>
                     </div>
 
                     {/* Messages Panel */}
-                    <div className="bg-white border border-[#E2E8F0] rounded-3xl p-8 min-h-[380px] flex items-center justify-center flex-col text-center shadow-sm">
+                    <div className="bg-white border border-[#E2E8F0] rounded-lg p-8 min-h-[380px] flex items-center justify-center flex-col text-center ">
                         <div
                             className="p-4 rounded-full mb-4"
                             style={{ background: '#F0FAFA' }}

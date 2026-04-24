@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Normalize email fields in payload or params
-    if (config.data) {
+    if (config.data && !(config.data instanceof FormData)) {
       config.data = normalizeEmailFields(config.data);
     }
     if (config.params) {
