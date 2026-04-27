@@ -8,7 +8,7 @@ import axios from '../utils/axiosInstance';
  * @param {FormData} productData - FormData containing title, description, price, stock, image, and store (sqid).
  */
 export async function createProduct(productData) {
-  const response = await axios.post(`api/products/`, productData, {
+  const response = await axios.post(`api/products`, productData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -19,8 +19,24 @@ export async function createProduct(productData) {
 /**
  * Fetches all products for a specific store.
  * @param {string} storeSqid - The store's sqid.
+ * @param {Object} params - Optional search and pagination parameters.
  */
-export async function getProducts(storeSqid) {
-  const response = await axios.get(`api/products/?store=${storeSqid}`);
+export async function getProducts(storeSqid, { search = '', page = 1 } = {}) {
+  const response = await axios.get(`api/products`, {
+    params: {
+      store: storeSqid,
+      search,
+      page,
+    }
+  });
+  return response.data;
+}
+
+/**
+ * Deletes a product by its sqid.
+ * @param {string} sqid - The product's sqid.
+ */
+export async function deleteProduct(sqid) {
+  const response = await axios.delete(`api/products/${sqid}`);
   return response.data;
 }

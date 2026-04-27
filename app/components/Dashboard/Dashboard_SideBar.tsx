@@ -83,10 +83,16 @@ const Dashboard_SideBar = () => {
         queryClient.setQueryData(['selectedStore'], store);
     };
 
-    // Preselect first store
+    // Preselect first store or handle deletion
     useEffect(() => {
-        if (stores.length > 0 && !selectedStore) {
-            setSelectedStore(stores[0]);
+        if (stores.length > 0) {
+            const stillExists = selectedStore && stores.some(s => s.sqid === selectedStore.sqid);
+            if (!selectedStore || !stillExists) {
+                setSelectedStore(stores[0]);
+            }
+        } else if (selectedStore) {
+            // No stores left
+            queryClient.setQueryData(['selectedStore'], null);
         }
     }, [stores, selectedStore]);
 

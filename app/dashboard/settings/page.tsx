@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Layout from '@/app/components/Dashboard/layout';
 import Dashboard_Header from '@/app/components/Dashboard/Dashboard_Header';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteStore, disconnectTelegram } from '@/services/storeService';
+import { deleteStore, disconnectTelegram, connectTelegram } from '@/services/storeService';
 
 interface Store {
     sqid: string;
@@ -28,17 +28,59 @@ import {
     LogOut,
     ChevronRight,
     ExternalLink,
-    Store
+    Store as StoreIcon,
+    X,
+    AlertCircle
 } from 'lucide-react';
 import { SiTelegram, SiWhatsapp, SiInstagram, SiTiktok } from 'react-icons/si';
 import { toast } from 'sonner';
 
 type SettingsTab = 'store' | 'profile';
 
+const Modal = ({ isOpen, onClose, title, children }: any) => (
+    <AnimatePresence>
+        {isOpen && (
+            <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
+                <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }} 
+                    exit={{ opacity: 0 }}
+                    onClick={onClose}
+                    className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" 
+                />
+                <motion.div 
+                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                    className="relative bg-white rounded-lg border border-slate-200 w-full max-w-md overflow-hidden"
+                >
+                    <div className="px-6 py-3 border-b border-slate-100 flex items-center justify-between">
+                        <h3 className="font-bold text-slate-900">{title}</h3>
+                        <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 cursor-pointer">
+                            <X size={20} />
+                        </button>
+                    </div>
+                    <div className="p-6">
+                        {children}
+                    </div>
+                </motion.div>
+            </div>
+        )}
+    </AnimatePresence>
+);
+
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState<SettingsTab>('store');
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDisconnecting, setIsDisconnecting] = useState(false);
+    const [isConnecting, setIsConnecting] = useState(false);
+    
+    // Modal states
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDisconnectModal, setShowDisconnectModal] = useState(false);
+    const [showConnectModal, setShowConnectModal] = useState(false);
+    const [channelUsername, setChannelUsername] = useState("");
+
     const queryClient = useQueryClient();
 
     // Get selected store from cache
@@ -50,14 +92,12 @@ export default function SettingsPage() {
 
     const handleDeleteStore = async () => {
         if (!selectedStore) return;
-        if (!confirm(`Are you sure you want to delete "${selectedStore.name}"? This action cannot be undone.`)) return;
-
         setIsDeleting(true);
         try {
             await deleteStore(selectedStore.sqid);
             toast.success("Store deleted successfully");
             queryClient.invalidateQueries({ queryKey: ['stores'] });
-            // The sidebar will handle re-selection once stores are refetched
+            setShowDeleteModal(false);
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to delete store");
         } finally {
@@ -67,13 +107,13 @@ export default function SettingsPage() {
 
     const handleDisconnectBot = async () => {
         if (!selectedStore) return;
-        if (!confirm(`Disconnect Konversa Bot from "${selectedStore.name}"?`)) return;
-
         setIsDisconnecting(true);
         try {
             await disconnectTelegram(selectedStore.sqid);
             toast.success("Bot disconnected successfully");
             queryClient.invalidateQueries({ queryKey: ['stores'] });
+            queryClient.invalidateQueries({ queryKey: ['selectedStore'] });
+            setShowDisconnectModal(false);
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to disconnect bot");
         } finally {
@@ -81,14 +121,36 @@ export default function SettingsPage() {
         }
     };
 
+    const handleConnectBot = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedStore || !channelUsername) return;
+        setIsConnecting(true);
+        try {
+            const cleanUsername = channelUsername.startsWith('@') ? channelUsername.slice(1) : channelUsername;
+            await connectTelegram(selectedStore.sqid, cleanUsername);
+            toast.success("Bot connected successfully");
+            queryClient.invalidateQueries({ queryKey: ['stores'] });
+            queryClient.invalidateQueries({ queryKey: ['selectedStore'] });
+            setShowConnectModal(false);
+            setChannelUsername("");
+        } catch (error: any) {
+            toast.error(error.response?.data?.detail || "Failed to connect bot");
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
+
     const tabs = [
-        { id: 'store', label: 'Store Settings', icon: Store },
+        { id: 'store', label: 'Store Settings', icon: StoreIcon },
         { id: 'profile', label: 'Profile Settings', icon: User },
     ];
 
+    const isBotConnected = selectedStore?.telegram_channels && selectedStore.telegram_channels.length > 0;
+
     return (
         <Layout>
-            <div className="flex-1 p-3 md:p-5 lg:p-10  z-10 overflow-y-scroll  bg-slate-50/30">
+            <div className="flex-1 p-3 md:p-5 lg:p-10 overflow-y-scroll  bg-slate-50/30">
                 <Dashboard_Header />
                 
                 <main className="flex-1 mx-auto overflow-y-auto  space-y-8">
@@ -164,7 +226,7 @@ export default function SettingsPage() {
                                         </div>
 
                                         <div className="space-y-6">
-                                            {/* Telegram (Active) */}
+                                            {/* Telegram */}
                                             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50/50 rounded-lg border border-slate-100 gap-5 sm:gap-0">
                                                 <div className="flex items-center gap-4">
                                                     <div className="p-3 bg-white rounded-lg text-[#14B8A6] border border-slate-200">
@@ -172,24 +234,41 @@ export default function SettingsPage() {
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center gap-2">
-                                                            <h3 className="font-bold text-slate-900">Telegram Channel</h3>
-                                                            <span className="px-2 py-0.5 bg-[#14B8A6]/10 text-[#14B8A6] text-[10px] font-bold rounded-full flex items-center gap-1">
-                                                                <CheckCircle2 size={10} /> Connected
-                                                            </span>
+                                                            <h3 className="font-bold text-slate-900">Telegram Bot</h3>
+                                                            {isBotConnected ? (
+                                                                <span className="px-2 py-0.5 bg-[#14B8A6]/10 text-[#14B8A6] text-[10px] font-bold rounded-full flex items-center gap-1">
+                                                                    <CheckCircle2 size={10} /> Connected
+                                                                </span>
+                                                            ) : (
+                                                                <span className="px-2 py-0.5 bg-slate-200 text-slate-500 text-[10px] font-bold rounded-full">
+                                                                    Not Connected
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <p className="text-xs text-slate-500 mt-0.5">
-                                                            @{selectedStore?.telegram_username || selectedStore?.telegram_channels?.[0]?.channel_username || 'connected_channel'}
+                                                            {isBotConnected 
+                                                                ? `${selectedStore?.telegram_username || selectedStore?.telegram_channels?.[0]?.channel_username}`
+                                                                : "Enable automated selling on Telegram"}
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <button 
-                                                    disabled={isDisconnecting}
-                                                    onClick={handleDisconnectBot}
-                                                    className="px-4 py-2 text-xs font-bold text-red-500 hover:bg-red-50 rounded-full transition-all flex items-center gap-2 border border-red-100"
-                                                >
-                                                    {isDisconnecting ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />}
-                                                    Disconnect Bot
-                                                </button>
+                                                {isBotConnected ? (
+                                                    <button 
+                                                        onClick={() => setShowDisconnectModal(true)}
+                                                        className="px-6 py-2 text-xs font-bold text-red-500 hover:bg-red-50 rounded-full transition-all flex items-center gap-2 border border-red-100 cursor-pointer"
+                                                    >
+                                                        <LogOut size={14} />
+                                                        Disconnect Bot
+                                                    </button>
+                                                ) : (
+                                                    <button 
+                                                        onClick={() => setShowConnectModal(true)}
+                                                        className="px-6 py-2 text-xs font-bold text-[#14B8A6] hover:bg-[#14B8A6]/5 rounded-full transition-all flex items-center gap-2 border border-[#14B8A6] cursor-pointer"
+                                                    >
+                                                        <SiTelegram size={14} />
+                                                        Connect Telegram
+                                                    </button>
+                                                )}
                                             </div>
 
                                             {/* Others (Coming Soon) */}
@@ -202,7 +281,7 @@ export default function SettingsPage() {
                                                         { name: 'TikTok', icon: SiTiktok, color: 'text-slate-900' },
                                                     ].map((social) => (
                                                         <div key={social.name} className="flex items-center gap-3 p-3 bg-slate-50/30 border border-slate-100 rounded-lg grayscale opacity-60">
-                                                            <div className={`p-2 bg-white rounded-lg  border shadow border-slate-200 ${social.color}`}>
+                                                            <div className={`p-2 bg-white rounded-lg border border-slate-200 ${social.color}`}>
                                                                 <social.icon size={18} />
                                                             </div>
                                                             <span className="text-sm font-bold text-slate-400">{social.name}</span>
@@ -228,18 +307,17 @@ export default function SettingsPage() {
                                                 Deleting this store will permanently remove all products, orders, and configuration. This action is irreversible.
                                             </p>
                                             <button 
-                                                disabled={isDeleting}
-                                                onClick={handleDeleteStore}
-                                                className="w-full mt-4 bg-red-500 text-white py-3 rounded-full font-bold text-xs flex items-center justify-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-500/10 disabled:opacity-50 cursor-pointer"
+                                                onClick={() => setShowDeleteModal(true)}
+                                                className="w-full mt-4 bg-red-500 text-white py-3 rounded-full font-bold text-xs flex items-center justify-center gap-2 hover:bg-red-600 transition-all border border-red-600 cursor-pointer"
                                             >
-                                                {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                                                <Trash2 size={16} />
                                                 Delete Store Permanently
                                             </button>
                                         </div>
                                     </section>
 
                                     {/* Quick Info */}
-                                    <section className="bg-[#14B8A6] rounded-lg p-6 text-white shadow-lg shadow-[#14B8A6]/20 relative overflow-hidden group">
+                                    <section className="bg-[#14B8A6] rounded-lg p-6 text-white border border-[#14B8A6] relative overflow-hidden group">
                                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
                                             <Globe size={80} />
                                         </div>
@@ -247,7 +325,7 @@ export default function SettingsPage() {
                                         <p className="text-white/80 text-xs mt-2 relative z-10 leading-relaxed">
                                             If you're having trouble connecting your channels, check our documentation or contact support.
                                         </p>
-                                        <button className="mt-6 flex items-center gap-2 text-xs font-bold bg-white text-[#14B8A6] px-4 py-2 rounded-full hover:shadow-xl transition-all relative z-10">
+                                        <button className="mt-6 flex items-center gap-2 text-xs font-bold bg-white text-[#14B8A6] px-4 py-2 rounded-full border border-white hover:bg-white/90 transition-all relative z-10">
                                             View Guides <ExternalLink size={12} />
                                         </button>
                                     </section>
@@ -271,6 +349,113 @@ export default function SettingsPage() {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                    {/* Modals */}
+                    <Modal 
+                        isOpen={showConnectModal} 
+                        onClose={() => setShowConnectModal(false)} 
+                        title="Connect Telegram Bot"
+                    >
+                        <form onSubmit={handleConnectBot} className="space-y-6">
+                            <div className="p-4 bg-[#14B8A6]/5 rounded-xl border border-[#14B8A6]/10 flex items-start gap-3">
+                                <AlertCircle className="text-[#14B8A6] mt-0.5" size={18} />
+                                <p className="text-xs text-[#14B8A6]/80 leading-relaxed">
+                                    To connect, ensure you have added your bot to your Telegram channel as an administrator.
+                                </p>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">Channel Username</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="your_channel_name"
+                                        value={channelUsername}
+                                        onChange={(e) => setChannelUsername(e.target.value)}
+                                        className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#14B8A6] text-sm font-medium"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <button 
+                                type="submit"
+                                disabled={isConnecting}
+                                className="w-full py-3 bg-[#14B8A6] text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#0F766E] transition-all disabled:opacity-50 border border-[#14B8A6] cursor-pointer"
+                            >
+                                {isConnecting ? <Loader2 size={18} className="animate-spin" /> : "Connect Channel"}
+                            </button>
+                        </form>
+                    </Modal>
+
+                    <Modal 
+                        isOpen={showDisconnectModal} 
+                        onClose={() => setShowDisconnectModal(false)} 
+                        title="Disconnect Bot"
+                    >
+                        <div className="space-y-6 text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mx-auto border border-red-100">
+                                <LogOut size={32} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    Are you sure you want to disconnect the bot from <span className="font-bold text-slate-900">{selectedStore?.name}</span>?
+                                </p>
+                                <p className="text-xs text-slate-400 mt-2 italic">
+                                    Users won't be able to shop via Telegram until you reconnect.
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <button 
+                                    onClick={handleDisconnectBot}
+                                    disabled={isDisconnecting}
+                                    className="w-full py-3 bg-red-500 text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-600 transition-all border border-red-600 cursor-pointer"
+                                >
+                                    {isDisconnecting ? <Loader2 size={18} className="animate-spin" /> : "Disconnect Anyway"}
+                                </button>
+                                <button 
+                                    onClick={() => setShowDisconnectModal(false)}
+                                    className="w-full py-3 bg-slate-100 text-slate-600 rounded-full font-bold text-sm hover:bg-slate-200 transition-all border border-slate-200 cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
+
+                    <Modal 
+                        isOpen={showDeleteModal} 
+                        onClose={() => setShowDeleteModal(false)} 
+                        title="Delete Store Permanently"
+                    >
+                        <div className="space-y-6 text-center">
+                            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mx-auto border border-red-100">
+                                <Trash2 size={32} />
+                            </div>
+                            <div>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    This will permanently delete <span className="font-bold text-slate-900">{selectedStore?.name}</span> and all associated data.
+                                </p>
+                                <p className="text-xs font-bold text-red-500 mt-2 uppercase tracking-widest">
+                                    This action cannot be undone.
+                                </p>
+                            </div>
+                            <div className="flex flex-col gap-3">
+                                <button 
+                                    onClick={handleDeleteStore}
+                                    disabled={isDeleting}
+                                    className="w-full py-3 bg-red-500 text-white rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-600 transition-all border border-red-600 cursor-pointer"
+                                >
+                                    {isDeleting ? <Loader2 size={18} className="animate-spin" /> : "Yes, Delete Store"}
+                                </button>
+                                <button 
+                                    onClick={() => setShowDeleteModal(false)}
+                                    className="w-full py-3 bg-slate-100 text-slate-600 rounded-full font-bold text-sm hover:bg-slate-200 transition-all border border-slate-200 cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </Modal>
                 </main>
             </div>
         </Layout>

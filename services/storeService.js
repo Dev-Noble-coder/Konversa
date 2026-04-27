@@ -8,7 +8,7 @@ import axios from '../utils/axiosInstance';
  * @param {Object} storeData - { name: string }
  */
 export async function createStore(storeData) {
-  const response = await axios.post(`api/stores/`, storeData);
+  const response = await axios.post(`api/stores`, storeData);
   console.log(response)
   return response.data;
 }
@@ -17,7 +17,7 @@ export async function createStore(storeData) {
  * Fetches all stores for the authenticated user.
  */
 export async function getStores() {
-  const response = await axios.get(`api/stores/list`);
+  const response = await axios.get(`api/stores`);
   return response.data;
 }
 
@@ -39,7 +39,7 @@ export async function connectTelegram(sqid, channelUsername) {
  * @param {string} sqid - The store's sqid.
  */
 export async function deleteStore(sqid) {
-  const response = await axios.delete(`api/stores/${sqid}/`);
+  const response = await axios.delete(`api/stores/${sqid}`);
   return response.data;
 }
 
@@ -48,8 +48,10 @@ export async function deleteStore(sqid) {
  * @param {string} sqid - The store's sqid.
  */
 export async function disconnectTelegram(sqid) {
-  const response = await axios.post(`api/stores/disconnect-telegram/`, {
-    store: sqid,
+  const response = await axios.post(`api/stores/disconnect-telegram`, {}, {
+    params: {
+      store: sqid,
+    }
   });
   return response.data;
 }

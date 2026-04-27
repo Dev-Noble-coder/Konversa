@@ -43,9 +43,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ initialIsLogin = true, allowToggle 
                 });
                 console.log('Login Response:', data);
 
-                // Store access token
-                if (data?.data?.access_token) {
-                    setToken(data.data.access_token);
+                // Store access token (normalized by authService)
+                const token = data?.access_token || data?.data?.access_token;
+                if (token) {
+                    setToken(token);
                 }
 
                 toast.success('Successfully logged in!');

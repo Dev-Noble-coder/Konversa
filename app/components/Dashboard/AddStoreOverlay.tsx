@@ -43,6 +43,7 @@ const AddStoreOverlay = ({ isOpen, onClose }: AddStoreOverlayProps) => {
             const newStore = await createStore({ name: storeName });
             setStoreSqid(newStore.sqid || newStore.data?.sqid || '');
             toast.success('Store created successfully!');
+            queryClient.invalidateQueries({ queryKey: ['stores'] });
             setStep('SELECT_PLATFORM');
         } catch (error: any) {
             const msg = error.response?.data?.detail || error.response?.data?.message || 'Failed to create store';

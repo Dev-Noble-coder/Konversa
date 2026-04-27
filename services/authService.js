@@ -30,7 +30,9 @@ export function setToken(token) {
 export async function login(userData) {
   const normalizedData = normalizeEmailFields(userData);
   const response = await axiosInstance.post(`api/auth/login`, normalizedData);
-  return response.data;
+  const body = response.data;
+  const token = body?.data?.access_token || body?.access_token;
+  return { ...body, access_token: token };
 }
 
 /**
@@ -39,7 +41,9 @@ export async function login(userData) {
 export async function signup(userData) {
   const normalizedData = normalizeEmailFields(userData);
   const response = await axiosInstance.post(`api/auth/signup`, normalizedData);
-  return response.data;
+  const body = response.data;
+  const token = body?.data?.access_token || body?.access_token;
+  return { ...body, access_token: token };
 }
 
 /**
@@ -63,11 +67,15 @@ export async function refreshToken() {
       },
     });
 
-    const data = response.data;
-    if (data?.access_token) {
-      setToken(data.access_token);
+    const body = response.data;
+    // Extract token from body.data.access_token or body.access_token
+    const token = body?.data?.access_token || body?.access_token;
+    
+    if (token) {
+      setToken(token);
     }
-    return data;
+    // Return both for compatibility
+    return { ...body, access_token: token };
   } catch (error) {
     console.error(
       "Refresh token failed:",
