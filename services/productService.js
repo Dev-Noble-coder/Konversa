@@ -40,3 +40,13 @@ export async function deleteProduct(sqid) {
   const response = await axios.delete(`api/products/${sqid}`);
   return response.data;
 }
+
+/**
+ * Publishes a product to a Telegram channel.
+ * @param {string} channel - The Telegram channel username or id.
+ * @param {string} product - The product sqid.
+ */
+export async function publishProduct(channel, product) {
+  const response = await axios.post(`api/products/publish`, { channel, product });
+  return response.data;
+}

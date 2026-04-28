@@ -15,6 +15,7 @@ import Dashboard_Header from '../components/Dashboard/Dashboard_Header';
 import { refreshToken } from '@/services/authService';
 import { useQuery } from '@tanstack/react-query';
 import { getStores } from '@/services/storeService';
+import { getProducts } from '@/services/productService';
 import { useMemo } from 'react';
 
 
@@ -33,6 +34,29 @@ export default function DashboardPage() {
             : Array.isArray(rawStoresData?.stores) ? rawStoresData.stores
             : [];
     }, [rawStoresData]);
+
+    // Read the selected store from TanStack cache (set by the sidebar)
+    const { data: selectedStore } = useQuery<any>({
+        queryKey: ['selectedStore'],
+        queryFn: () => Promise.resolve(null),
+        enabled: false,
+    });
+
+    // Fetch products for the selected store
+    const { data: productsData } = useQuery<any>({
+        queryKey: ['products', selectedStore?.sqid],
+        queryFn: () => getProducts(selectedStore?.sqid, {}),
+        enabled: !!selectedStore?.sqid,
+    });
+
+    const productsCount = useMemo(() => {
+        if (!productsData) return 0;
+        if (Array.isArray(productsData)) return productsData.length;
+        if (Array.isArray(productsData?.results)) return productsData.results.length;
+        if (Array.isArray(productsData?.data)) return productsData.data.length;
+        if (typeof productsData?.count === 'number') return productsData.count;
+        return 0;
+    }, [productsData]);
 
     if (isLoading) {
         return (
@@ -118,7 +142,7 @@ export default function DashboardPage() {
                         <div className="bg-[#FFD460] border border-[#F2C446] rounded-lg p-3 md:p-4 lg:p-6 flex flex-col justify-between min-h-[140px] text-white relative overflow-hidden group">
                             <div className="relative z-10">
                                 <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1">Total Products</h3>
-                                <p className="text-3xl font-bold tracking-tight">0</p>
+                                <p className="text-3xl font-bold tracking-tight">{productsCount}</p>
                             </div>
                             <div className="relative z-10 flex items-center justify-between mt-4">
                                 <p className="text-[10px] font-medium opacity-80 uppercase tracking-wide">Active <br /> listings</p>

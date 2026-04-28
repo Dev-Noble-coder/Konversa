@@ -17,14 +17,17 @@ import {
     Trash2,
     MoreVertical,
     Search,
-    Edit2
+    Edit2,
+    Send,
+    CheckSquare,
+    Square
 } from 'lucide-react';
 import Layout from '@/app/components/Dashboard/layout';
 import Dashboard_Header from '@/app/components/Dashboard/Dashboard_Header';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
-import { createProduct, getProducts, deleteProduct } from '@/services/productService';
+import { createProduct, getProducts, deleteProduct, publishProduct } from '@/services/productService';
 
 const ProductsPage = () => {
     const queryClient = useQueryClient();
@@ -32,6 +35,8 @@ const ProductsPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+    const [isPublishing, setIsPublishing] = useState(false);
 
     // Fetch selected store from cache
     const { data: selectedStore } = useQuery<any>({
@@ -129,6 +134,52 @@ const ProductsPage = () => {
         });
     };
 
+    const toggleSelect = (sqid: string) => {
+        setSelectedProducts(prev => {
+            const next = new Set(prev);
+            if (next.has(sqid)) next.delete(sqid);
+            else next.add(sqid);
+            return next;
+        });
+    };
+
+    const isAllSelected = products.length > 0 && selectedProducts.size === products.length;
+
+    const toggleSelectAll = () => {
+        if (isAllSelected) {
+            setSelectedProducts(new Set());
+        } else {
+            setSelectedProducts(new Set(products.map((p: any) => p.sqid)));
+        }
+    };
+
+    const handleBulkPublish = async () => {
+        if (selectedProducts.size === 0) {
+            toast.error("Select at least one product to post.");
+            return;
+        }
+        const channel = selectedStore?.telegram_channels?.[0]?.sqid;
+        if (!channel) {
+            toast.error("No Telegram channel connected to this store.");
+            return;
+        }
+        setIsPublishing(true);
+        let successCount = 0;
+        let failCount = 0;
+        for (const sqid of selectedProducts) {
+            try {
+                await publishProduct(channel, sqid);
+                successCount++;
+            } catch {
+                failCount++;
+            }
+        }
+        setIsPublishing(false);
+        setSelectedProducts(new Set());
+        if (successCount > 0) toast.success(`${successCount} product${successCount > 1 ? 's' : ''} posted successfully!`);
+        if (failCount > 0) toast.error(`${failCount} product${failCount > 1 ? 's' : ''} failed to post.`);
+    };
+
     const NairaIcon = ({ size = 14, className = "" }: { size?: number; className?: string }) => (
         <span className={`font-bold ${className}`} style={{ fontSize: size }}>₦</span>
     );
@@ -200,7 +251,7 @@ const ProductsPage = () => {
                                             <h2 className="text-2xl font-bold text-slate-900">Products</h2>
                                             <p className="text-sm text-slate-500">Manage and track your store inventory</p>
                                         </div>
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 flex-wrap">
                                             <div className="relative flex-1 md:w-64">
                                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                                                 <input 
@@ -211,9 +262,37 @@ const ProductsPage = () => {
                                                     className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#14B8A6]/20 transition-all"
                                                 />
                                             </div>
+                                            {/* Select All Toggle */}
+                                            <button
+                                                onClick={toggleSelectAll}
+                                                className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 bg-white text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all cursor-pointer"
+                                            >
+                                                {isAllSelected
+                                                    ? <CheckSquare size={16} className="text-[#14B8A6]" />
+                                                    : <Square size={16} className="text-slate-400" />}
+                                                <span className="hidden sm:inline">Select All</span>
+                                            </button>
+                                            {/* Post Selected Button */}
+                                            <AnimatePresence>
+                                            {selectedProducts.size > 0 && (
+                                                <motion.button
+                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.9 }}
+                                                    onClick={handleBulkPublish}
+                                                    disabled={isPublishing}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-[#14B8A6] text-white rounded-lg font-bold hover:bg-[#0F766E] transition-all shadow-md active:scale-95 text-sm cursor-pointer disabled:opacity-60"
+                                                >
+                                                    {isPublishing
+                                                        ? <Loader2 size={16} className="animate-spin" />
+                                                        : <Send size={16} />}
+                                                    <span>Post ({selectedProducts.size})</span>
+                                                </motion.button>
+                                            )}
+                                            </AnimatePresence>
                                             <button
                                                 onClick={() => setIsUploading(true)}
-                                                className="flex items-center gap-2 px-4 py-2 bg-[#14B8A6] text-white rounded-lg font-bold hover:bg-[#0F766E] transition-all shadow-md active:scale-95 text-sm cursor-pointer"
+                                                className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-700 transition-all shadow-md active:scale-95 text-sm cursor-pointer"
                                             >
                                                 <Plus size={18} />
                                                 <span className="hidden sm:inline">Add Product</span>
@@ -228,13 +307,17 @@ const ProductsPage = () => {
                                         </div>
                                     ) : (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                            {products.map((product: any) => (
+                                            {products.map((product: any) => {
+                                                const isSelected = selectedProducts.has(product.sqid);
+                                                return (
                                                 <motion.div
                                                     layout
                                                     key={product.sqid}
                                                     initial={{ opacity: 0, scale: 0.95 }}
                                                     animate={{ opacity: 1, scale: 1 }}
-                                                    className="bg-white rounded-lg border border-slate-200 overflow-hidden group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col"
+                                                    className={`bg-white rounded-lg border overflow-hidden group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col ${
+                                                        isSelected ? 'border-[#14B8A6] ring-2 ring-[#14B8A6]/20' : 'border-slate-200'
+                                                    }`}
                                                 >
                                                     {/* Image Area */}
                                                     <div className="relative h-40 bg-slate-100 overflow-hidden">
@@ -249,6 +332,15 @@ const ProductsPage = () => {
                                                                 <ImageIcon size={48} strokeWidth={1} />
                                                             </div>
                                                         )}
+                                                        {/* Checkbox */}
+                                                        <button
+                                                            onClick={() => toggleSelect(product.sqid)}
+                                                            className="absolute top-3 left-3 z-10 transition-all"
+                                                        >
+                                                            {isSelected
+                                                                ? <CheckSquare size={22} className="text-[#14B8A6] drop-shadow" />
+                                                                : <Square size={22} className="text-white drop-shadow opacity-70 group-hover:opacity-100 transition-opacity" />}
+                                                        </button>
                                                         <div className="absolute top-3 right-3 flex gap-2">
                                                             <button 
                                                                 onClick={() => handleDelete(product.sqid)}
@@ -289,7 +381,8 @@ const ProductsPage = () => {
                                                         </div>
                                                     </div>
                                                 </motion.div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </motion.div>
