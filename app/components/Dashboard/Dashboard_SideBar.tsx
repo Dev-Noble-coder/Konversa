@@ -86,9 +86,16 @@ const Dashboard_SideBar = () => {
     // Preselect first store or handle deletion
     useEffect(() => {
         if (stores.length > 0) {
-            const stillExists = selectedStore && stores.some(s => s.sqid === selectedStore.sqid);
-            if (!selectedStore || !stillExists) {
+            const currentStoreInList = selectedStore && stores.find(s => s.sqid === selectedStore.sqid);
+            
+            if (!selectedStore || !currentStoreInList) {
+                // If no selection or selected store deleted, select first
                 setSelectedStore(stores[0]);
+            } else {
+                // Sync selectedStore with latest data from the stores list if properties changed
+                if (JSON.stringify(currentStoreInList) !== JSON.stringify(selectedStore)) {
+                    setSelectedStore(currentStoreInList);
+                }
             }
         } else if (selectedStore) {
             // No stores left

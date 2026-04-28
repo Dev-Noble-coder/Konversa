@@ -300,27 +300,27 @@ const ProductsPage = () => {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
-                                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-2xl shadow-slate-200/20"
+                                className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-2xl shadow-slate-200/20"
                             >
                                 {/* Form Header */}
                                 <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                     <div className="flex items-center gap-4">
                                         <button 
                                             onClick={() => setIsUploading(false)}
-                                            className="p-2.5 hover:bg-white rounded-xl transition-all text-slate-400 hover:text-slate-600 shadow-sm border border-transparent hover:border-slate-100"
+                                            className="p-2.5 hover:bg-white rounded-lg transition-all text-slate-400 hover:text-slate-600  border border-slate-200 cursor-pointer"
                                         >
-                                            <ArrowLeft size={20} />
+                                            <ArrowLeft size={16} />
                                         </button>
                                         <div>
-                                            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Upload New Product</h2>
+                                            <h2 className="text-md sm:text-xl font-bold text-slate-900 tracking-tight">Upload New Product</h2>
                                             <p className="text-xs text-slate-500 font-medium">Adding to <span className="text-[#14B8A6] font-bold">{selectedStore?.name}</span></p>
                                         </div>
                                     </div>
                                     <button 
                                         onClick={() => setIsUploading(false)}
-                                        className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400"
+                                        className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 cursor-pointer"
                                     >
-                                        <X size={20} />
+                                        <X size={16} />
                                     </button>
                                 </div>
 
@@ -340,7 +340,7 @@ const ProductsPage = () => {
                                                     value={formData.title}
                                                     onChange={handleInputChange}
                                                     placeholder="e.g. Vintage Denim Jacket"
-                                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium"
+                                                    className="w-full px-5 py-3.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium"
                                                 />
                                             </div>
 
@@ -355,7 +355,7 @@ const ProductsPage = () => {
                                                     value={formData.description}
                                                     onChange={handleInputChange}
                                                     placeholder="Describe your product in detail..."
-                                                    className="w-full px-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium resize-none"
+                                                    className="w-full px-5 py-3.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium resize-none"
                                                 />
                                             </div>
 
@@ -374,7 +374,7 @@ const ProductsPage = () => {
                                                             value={formData.price}
                                                             onChange={handleInputChange}
                                                             placeholder="0.00"
-                                                            className="w-full pl-10 pr-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-bold"
+                                                            className="w-full pl-10 pr-5 py-3.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-bold"
                                                         />
                                                     </div>
                                                 </div>
@@ -390,7 +390,7 @@ const ProductsPage = () => {
                                                         value={formData.stock}
                                                         onChange={handleInputChange}
                                                         placeholder="1"
-                                                        className="w-full px-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium"
+                                                        className="w-full px-5 py-3.5 rounded-lg border border-slate-200 bg-slate-50/30 focus:outline-none focus:ring-4 focus:ring-[#14B8A6]/5 focus:border-[#14B8A6] transition-all text-sm font-medium"
                                                     />
                                                 </div>
                                             </div>
@@ -442,7 +442,7 @@ const ProductsPage = () => {
                                                 <button
                                                     type="submit"
                                                     disabled={isSubmitting || showSuccess}
-                                                    className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all text-sm ${
+                                                    className={`w-full py-3.5 rounded-full font-bold flex items-center justify-center gap-3 transition-all text-sm ${
                                                         showSuccess
                                                         ? 'bg-emerald-500 text-white'
                                                         : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 active:scale-[0.98]'

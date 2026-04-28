@@ -96,6 +96,7 @@ export default function SettingsPage() {
         try {
             await deleteStore(selectedStore.sqid);
             toast.success("Store deleted successfully");
+            queryClient.setQueryData(['selectedStore'], null); 
             queryClient.invalidateQueries({ queryKey: ['stores'] });
             setShowDeleteModal(false);
         } catch (error: any) {
@@ -111,8 +112,14 @@ export default function SettingsPage() {
         try {
             await disconnectTelegram(selectedStore.sqid);
             toast.success("Bot disconnected successfully");
+            
+            // Manually update selectedStore in cache for immediate UI update
+            if (selectedStore) {
+                const updatedStore = { ...selectedStore, telegram_channels: [] };
+                queryClient.setQueryData(['selectedStore'], updatedStore);
+            }
+
             queryClient.invalidateQueries({ queryKey: ['stores'] });
-            queryClient.invalidateQueries({ queryKey: ['selectedStore'] });
             setShowDisconnectModal(false);
         } catch (error: any) {
             toast.error(error.response?.data?.detail || "Failed to disconnect bot");
@@ -129,8 +136,17 @@ export default function SettingsPage() {
             const cleanUsername = channelUsername.startsWith('@') ? channelUsername.slice(1) : channelUsername;
             await connectTelegram(selectedStore.sqid, cleanUsername);
             toast.success("Bot connected successfully");
+            
+            // Manually update selectedStore in cache for immediate UI update
+            if (selectedStore) {
+                const updatedStore = { 
+                    ...selectedStore, 
+                    telegram_channels: [{ channel_username: cleanUsername }] 
+                };
+                queryClient.setQueryData(['selectedStore'], updatedStore);
+            }
+
             queryClient.invalidateQueries({ queryKey: ['stores'] });
-            queryClient.invalidateQueries({ queryKey: ['selectedStore'] });
             setShowConnectModal(false);
             setChannelUsername("");
         } catch (error: any) {
